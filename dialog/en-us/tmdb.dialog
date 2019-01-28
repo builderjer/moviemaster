@@ -1,0 +1,4 @@
+The movie { movie } is about { description }
+Here is the cast of the movie { movie } . { cast }
+Here is information on the actor { actor }
+The movie { movie } was made in { release_date }
