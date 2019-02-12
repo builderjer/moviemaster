@@ -1,37 +1,26 @@
 {
-    "name": "Tmdb",
+    "name": "TMDB",
     "skillMetadata": {
         "sections": [
             {
-                "name": "Options << Name of section",
+                "name": "API V3 key",
                 "fields": [
                     {
-                        "name": "internal_python_variable_name",
+                        "name": "apiv3",
                         "type": "text",
-                        "label": "Setting Friendly Display Name",
-                        "value": "",
-                        "placeholder": "demo prompt in the input box"
+                        "label": "V3 key",
+                        "value": "api key",
                     }
                 ]
             },
             {
-                "name": "Login << Name of another section",
+                "name": "Default Language",
                 "fields": [
                     {
-                        "type": "label",
-                        "label": "Just a little bit of extra info for the user to understand following settings"
-                    },
-                    {
-                        "name": "username",
+                        "name": "language",
                         "type": "text",
-                        "label": "Username",
-                        "value": ""
-                    },
-                    {
-                        "name": "password",
-                        "type": "password",
-                        "label": "Password",
-                        "value": ""
+                        "label": "en_US",
+                        "value": "en_US"
                     }
                 ]
             }
