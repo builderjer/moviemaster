@@ -134,7 +134,10 @@ class Tmdb(MycroftSkill):
             if overview is '':
                 self.speak_dialog("no.info", {"movie": movie})
                 return
-            self.speak_dialog("movie.description", {"movie": movie, "overview": overview})
+            self.speak_dialog("movie.description", {"movie": movie})
+            for sentence in overview.split('. '):
+                self.speak(sentence, wait=True)
+
         except AttributeError:
             self.speak_dialog("no.info", {"movie": movie})
 
