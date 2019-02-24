@@ -22,7 +22,6 @@ TMDB = {
 		#"tv": tmdbv3api.TV()
 		}
 
-
 class Tmdb(MycroftSkill):
 	def __init__(self):
 		super(Tmdb, self).__init__(name="Tmdb")
@@ -32,13 +31,10 @@ class Tmdb(MycroftSkill):
 	def initialize(self):
 		TMDB["tmdb"].api_key = self.settings.get("apiv3")
 		TMDB["tmdb"].language = self.lang
-		#TMDB["tmdb"].language = self.settings.get("language")
 
 ##################
 # Movie Section
 ##################
-
-# Movie Details
 
 	def getMovieDetails(self, movie):
 		self.resetMovieDetails()
@@ -49,23 +45,23 @@ class Tmdb(MycroftSkill):
 		self.movieID = None
 		self.movieDetails = None
 
-	def checkRepeatMovie(self, movie):
+	def checkMovie(self, movie):
 		if self.movieDetails and self.movieDetails.title.lower() == movie:
 			return True
-		return False
-
-	def parseDate(self, date):
-		date = date.replace("-", " ")
-		date = datetime.strptime(date, "%Y %m %d")
-		return nice_date(date)
-
+		else:
+			try:
+				self.getMovieDetails(movie)
+				return True
+			except IndexError:
+				self.resetMovieDetails()
+			return False
+		
 	def getDate(self):
 		return nice_date(datetime.strptime(self.movieDetails.release_date.replace("-", " "), "%Y %m %d"))
 
 	def getCast(self):
 		depth = self.settings.get("cast_depth")
 		return self.movieDetails.casts['cast'][:depth]
-		# TODO: Do I need to parse this further here?
 
 	def getBudget(self):
 		return pronounce_number(self.movieDetails.budget)
@@ -78,7 +74,7 @@ class Tmdb(MycroftSkill):
 		return self.movieDetails.production_companies[:depth]
 
 	def getRuntime(self):
-		return (nice_number(self.movieDetails.runtime) + " minutes")
+		return nice_number(self.movieDetails.runtime)
 
 	def getOverview(self):
 		return self.movieDetails.overview
@@ -93,63 +89,40 @@ class Tmdb(MycroftSkill):
 	@intent_file_handler("movie.information.intent")
 	def handle_movie_information(self, message):
 		movie = message.data.get("movie")
-		if not self.checkRepeatMovie(movie):
-			try:
-				self.getMovieDetails(movie)
-			except IndexError:
-				pass
-		try:
+		if self.checkMovie(movie):
 			self.speak_dialog("movie.info.response", {"movie": self.movieDetails.title, "year": self.getDate(), "budget": self.getBudget()})
 			self.speak(self.getTagline())
-		except AttributeError:
+		else:
 			self.speak_dialog("no.info", {"movie": movie})
 
 	@intent_file_handler("movie.year.intent")
 	def handle_movie_year(self, message):
 		movie = message.data.get("movie")
-		if not self.checkRepeatMovie(movie):
-			try:
-				self.getMovieDetails(movie)
-			except IndexError:
-				pass
-
-		try:
+		if self.checkMovie(movie):
 			movie = self.movieDetails.title
 			release_date = self.getDate()
 			self.speak_dialog("movie.year", {"movie": movie, "year": release_date})
-
-		except AttributeError:
-				self.speak_dialog("no.info", {"movie": movie})
+		else:
+			self.speak_dialog("no.info", {"movie": movie})
 
 	@intent_file_handler("movie.description.intent")
 	def handle_movie_description(self, message):
 		movie = message.data.get("movie")
-		if not self.checkRepeatMovie(movie):
-			try:
-				self.getMovieDetails(movie)
-			except IndexError:
-				pass
-		try:
+		if self.checkMovie(movie):
 			overview = self.movieDetails.overview
 			if overview is '':
 				self.speak_dialog("no.info", {"movie": movie})
 				return
-			#self.speak_dialog("movie.description", {"movie": movie, "overview": overview})
 			self.speak_dialog("movie.description", {"movie": movie})
 			for sentence in overview.split('. '):
 				self.speak(sentence, wait=True)
-		except AttributeError:
+		else:
 			self.speak_dialog("no.info", {"movie": movie})
 
 	@intent_file_handler("movie.cast.intent")
 	def handle_movie_cast(self, message):
 		movie = message.data.get("movie")
-		if not self.checkRepeatMovie(movie):
-			try:
-				self.getMovieDetails(movie)
-			except IndexError:
-				pass
-		try:
+		if self.checkMovie(movie):
 			cast = self.getCast()
 			actorList = ""
 			last = cast.pop()
@@ -158,20 +131,13 @@ class Tmdb(MycroftSkill):
 				act = " {} as {},".format(actor['name'], actor['character'])
 				actorList = actorList + act
 			self.speak_dialog("movie.cast", {"movie": movie, "actorlist": actorList, "lastactor": lastActor})
-			#dialog = dialog + " {} as {}".format(lastActor['name'], lastActor['character']
-			#self.speak(dialog)
-		except AttributeError:
+		else:
 			self.speak_dialog("no.info", {"movie": movie})
 
 	@intent_file_handler("movie.production.intent")
 	def handle_movie_production(self, message):
 		movie = message.data.get("movie")
-		if not self.checkRepeatMovie(movie):
-			try:
-				self.getMovieDetails(movie)
-			except IndexError:
-				pass
-		try:
+		if self.checkMovie(movie):
 			company = self.getProductionCo()
 			noOfCo = len(company)
 			if noOfCo == 1:
@@ -182,18 +148,12 @@ class Tmdb(MycroftSkill):
 				for c in company:
 					companies = companies + c["name"] + ", "
 				self.speak_dialog("movie.production.multiple", {"companies": companies, "movie": movie, "lastcompany": lastCompany})
-		except AttributeError:
+		else:
 			self.speak_dialog("no.info", {"movie": movie})
 
 	@intent_file_handler("movie.genres.intent")
 	def handle_movie_genre(self, message):
-		movie = message.data.get("movie")
-		if not self.checkRepeatMovie(movie):
-			try:
-				self.getMovieDetails(movie)
-			except IndexError:
-				pass
-		try:
+		if self.checkMovie(movie):
 			genres = self.getGenres()
 			noOfGenres = len(genres)
 			if noOfGenres == 1:
@@ -204,9 +164,17 @@ class Tmdb(MycroftSkill):
 				for g in genres:
 					genreList = genreList + g["name"] + ", "
 				self.speak_dialog("movie.genre.multiple", {"genrelist": genreList, "genrelistlast": genreListLast})
-		except AttributeError:
+		else:
 			self.speak_dialog("no.info", {"movie": movie})
-
+			
+	@intent_file_handler("movie.runtime.intent")
+	def handle_movie_length(self, message):
+		movie = message.data.get("movie")
+		if self.checkMovie(movie):
+			runtime = self.getRuntime()
+			self.speak_dialog("movie.runtime", {"movie": movie, "runtime": runtime})
+		else:
+			self.speak_dialog("no.info", {"movie": movie})
 
 def create_skill():
 	return Tmdb()

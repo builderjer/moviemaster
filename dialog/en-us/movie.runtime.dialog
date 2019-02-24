@@ -1,0 +1,3 @@
+The (movie|film|flick) {movie}, runs for {runtime} minutes.
+The (movie|film|flick) {movie} is {runtime} minutes long.
+Watching {movie}; You can expect about {runtime} minutes before you can have a bathroom break.

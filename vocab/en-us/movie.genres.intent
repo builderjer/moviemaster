@@ -1,2 +1,3 @@
-what genres does the (movie|film|flick) {movie} belong to
-what are the genres of the (movie|film|flick) {movie}
+what (genres|genre) does the (movie|film|flick) {movie} belong to
+what are the (genres|genre) of the (movie|film|flick) {movie}
+what (genres|genre) (is|are) the (movie|film|flick) {movie}

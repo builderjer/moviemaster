@@ -1,0 +1,3 @@
+How long is the (movie|film|flick) {movie}
+What is the (runtime|length) of the (movie|film|flick) {movie}
+Get the (runtime|length) of the (movie|film|flick) {movie}
