@@ -66,19 +66,19 @@ class Tmdb(MycroftSkill):
 	def getDate(self):
 		return nice_date(datetime.strptime(self.movieDetails.release_date.replace("-", " "), "%Y %m %d"))
 	
-	def getCast(self, depth=4):
-		"""depth => How many cast members to aquire"""
-		cast = self.movieDetails.casts['cast'][:depth]
+	def getCast(self):
+		depth = self.settings.get("cast_depth")
+		return self.movieDetails.casts['cast'][:depth]
 		# TODO: Do I need to parse this further here?
-		return cast
 	
 	def getBudget(self):
-		return nice_number(self.movieDetails.budget)
+		return pronounce_number(self.movieDetails.budget)
 	
 	def getRevenue(self):
-		return nice_number(self.movieDetails.revenue)
+		return pronounce_number(self.movieDetails.revenue)
 	
-	def getProductionCo(self, depth=4):
+	def getProductionCo(self):
+		depth = self.settings.get("pro_co_depth")
 		return self.movieDetails.production_companies[:depth]
 	
 	def getRuntime(self):
@@ -90,7 +90,8 @@ class Tmdb(MycroftSkill):
 	def getTagline(self):
 		return self.movieDetails.tagline
 	
-	def getGenres(self, depth=4):
+	def getGenres(self):
+		depth = self.settings.get("genre_depth")
 		return self.movieDetails.genres[:depth]
 	
 	@intent_file_handler("movie.information.intent")
