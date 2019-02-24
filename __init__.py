@@ -131,6 +131,9 @@ class Tmdb(MycroftSkill):
                 pass
         try:
             overview = self.movieDetails.overview
+            if overview is '':
+                self.speak_dialog("no.info", {"movie": movie})
+                return
             self.speak_dialog("movie.description", {"movie": movie, "overview": overview})
         except AttributeError:
             self.speak_dialog("no.info", {"movie": movie})
