@@ -151,7 +151,6 @@ class Tmdb(MycroftSkill):
 				pass
 		try:
 			cast = self.getCast()
-			self.speak_dialog("movie.cast", {"movie": movie})
 			actorList = ""
 			lastActor = cast.pop()
 			for actor in cast:
