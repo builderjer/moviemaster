@@ -36,7 +36,8 @@ class Tmdb(MycroftSkill):
 	
 	def initialize(self):
 		TMDB["tmdb"].api_key = self.settings.get("apiv3")
-		TMDB["tmdb"].language = self.settings.get("language")
+		TMDB["tmdb".language = self.lang
+		#TMDB["tmdb"].language = self.settings.get("language")
 		
 ##################
 # Movie Section
