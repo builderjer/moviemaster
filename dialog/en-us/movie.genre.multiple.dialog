@@ -1,2 +1,2 @@
-The (movie|film|flick) can be found in one of the genres {genrelist} and {genrelistlast}
+The (movie|film|flick) can be found in one of the genres; {genrelist} and {genrelistlast}
 People concider the (movie|film) a {genrelist} or {genrelistlast}
