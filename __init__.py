@@ -137,64 +137,68 @@ class Tmdb(MycroftSkill):
 			self.speak_dialog("movie.description", {"movie": movie, "overview": overview})
 		except AttributeError:
 			self.speak_dialog("no.info", {"movie": movie})
-		#if self.checkRepeatMovie(movie):
-			#overview = self.movieDetails.overview
-		#else:
-			#self.getMovieDetails(movie)
-			#overview = self.movieDetails.overview
-		#if overview:
-			#self.speak_dialog("movie.description", {"movie": movie, "overview": overview})
-		#else:
-			#self.speak_dialog("no.info.dialog", {"movie": movie})
 			
 	@intent_file_handler("movie.cast.intent")
 	def handle_movie_cast(self, message):
 		movie = message.data.get("movie")
-		if self.checkRepeatMovie(movie):
+		if not self.checkRepeatMovie(movie):
+			try:
+				self.getMovieDetails(movie)
+			except IndexError:
+				pass
+		try:
 			cast = self.getCast()
-		else:
-			self.getMovieDetails(movie)
-			cast = self.getCast()
-		dialog = "The following people play in the movie {}.".format(movie)
-		for actor in cast:
-			act = " {} as {},".format(actor['name'], actor['character'])
-			dialog = dialog + act
-		self.speak(dialog)
+			self.speak_dialog("movie.cast", {"movie": movie})
+			dialog = ""
+			for actor in cast:
+				act = " {} as {},".format(actor['name'], actor['character'])
+				dialog = dialog + act
+			self.speak(dialog)
+		except AttributeError:
+			self.speak_dialog("no.info", {"movie": movie})
 				
 	@intent_file_handler("movie.production.intent")
 	def handle_movie_production(self, message):
 		movie = message.data.get("movie")
-		if self.checkRepeatMovie(movie):
+		if not self.checkRepeatMovie(movie):
+			try:
+				self.getMovieDetails(movie)
+			except IndexError:
+				pass
+		try:
 			company = self.getProductionCo()
-		else:
-			self.getMovieDetails(movie)
-			company = self.getProductionCo()
-		if len(company) == 1:
-			dialog = "The production company {} produced the movie {}.".format(company[0]["name"], movie)
-		if len(company) > 1:
-			dialog = "The following companies produced the movie {}. ".format(movie)
-			for comp in company:
-				dialog = dialog + comp["name"] + ", "
-		if len(company) < 1:
-			dialog = "There is no information on the production companies who made the movie {}.".format(movie)
-		self.speak(dialog)
-		
+			noOfCo = len(company)
+			if noOfCo == 1:
+				self.speak_dialog("movie.production.single", {"movie": movie, "company": company[0]["name"]})
+			if noOfCo > 1:
+				companies = ""
+				for c in company:
+					companies = companies + c["name"] + ", "
+				self.speak_dialog("movie.production.multiple", {"companies": companies, "movie": movie})
+		except AttributeError:
+			self.speak_dialog("no.info", {"movie": movie})
+					
 	@intent_file_handler("movie.genres.intent")
 	def handle_movie_genre(self, message):
 		movie = message.data.get("movie")
 		if not self.checkRepeatMovie(movie):
-			self.getMovieDetails(movie)
-		genres = self.getGenres()
-		if len(genres) > 1:
-			dialog = "The movie {} can be concidered a ".format(movie)
-			for g in genres:
-				dialog = dialog + g["name"] + " movie, "
-		if len(genres) < 1:
-			dialog = "I have no genre information on the movie {}".format(movie)
-		if len(genres) == 1:
-			dialog = "The movie {} is concidered a {} movie".format(movie, genres[0]["name"])
-		self.speak(dialog)
-
+			try:
+				self.getMovieDetails(movie)
+			except IndexError:
+				pass
+		try:
+			genres = self.getGenres()
+			noOfGenres = len(genres)
+			if noOfGenres == 1:
+				self.speak_dialog("movie.genre.single", {"movie": movie, "genre": genres[0]["name"]})
+			if noOfGenres > 1:
+				genreList = ""
+				for g in genres:
+					genreList = genreList + g["name"] + ", "
+				self.speak_dialog("movie.genre.multiple", {"genrelist": genreList})
+		except AttributeError:
+			self.speak_dialog("no.info", {"movie": movie})
+			
 def create_skill():
 	return Tmdb()
 
