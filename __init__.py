@@ -153,7 +153,7 @@ class Tmdb(MycroftSkill):
 			cast = self.getCast()
 			actorList = ""
 			last = cast.pop()
-			lastActor = " {} as {}".format(last['name'], last['character']
+			lastActor = " {} as {}".format(last['name'], last['character'])
 			for actor in cast:
 				act = " {} as {},".format(actor['name'], actor['character'])
 				actorList = actorList + act
