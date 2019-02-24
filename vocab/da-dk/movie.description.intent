@@ -1,6 +1,6 @@
 # what is the (movie|film) {movie} about
 Hvad er (film | filmen) {movie} om
 # tell (me|us) about the (movie|film) {movie}
-fortæl (mig | os) om (film | filmen) {movie}
+fortæl (|mig | os) om (film | filmen) {movie}
 # give (me|us) a (description|synopsis) of the (movie|film) {movie}
-giv (mig | os) en (beskrivelse | synopsis) af (film | filmen) {movie}
+giv (mig | os) en (beskrivelse | synopsis) (af|om) (film | filmen) {movie}
