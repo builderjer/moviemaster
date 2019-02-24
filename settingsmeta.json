@@ -14,17 +14,6 @@
                 ]
             },
             {
-                "name": "Default Language",
-                "fields": [
-                    {
-                        "name": "language",
-                        "type": "text",
-                        "label": "en_US",
-                        "value": "en_US"
-                    }
-                ]
-            },
-            {
             	"name": "Cast Depth",
             	"fields": [
             		{
