@@ -1,2 +1,2 @@
-Here is the cast of {movie}
-The following people (star|play|act) in the movie {movie}
+Here is the cast of {movie}; {actorlist} and {lastactor}
+The following people (star|play|act) in the movie {movie}; {actorlist} and {lastactor}

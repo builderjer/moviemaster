@@ -152,11 +152,14 @@ class Tmdb(MycroftSkill):
 		try:
 			cast = self.getCast()
 			self.speak_dialog("movie.cast", {"movie": movie})
-			dialog = ""
+			actorList = ""
+			lastActor = cast.pop()
 			for actor in cast:
 				act = " {} as {},".format(actor['name'], actor['character'])
-				dialog = dialog + act
-			self.speak(dialog)
+				actorList = actorList + act
+			self.speak_dialog("movie.cast", {"movie": movie, "actorlist": actorList, "lastactor": lastActor})
+			#dialog = dialog + " {} as {}".format(lastActor['name'], lastActor['character']
+			#self.speak(dialog)
 		except AttributeError:
 			self.speak_dialog("no.info", {"movie": movie})
 
@@ -172,13 +175,13 @@ class Tmdb(MycroftSkill):
 			company = self.getProductionCo()
 			noOfCo = len(company)
 			if noOfCo == 1:
-
 				self.speak_dialog("movie.production.single", {"movie": movie, "company": company[0]["name"]})
 			if noOfCo > 1:
 				companies = ""
+				lastCompany = company.pop()["name"]
 				for c in company:
 					companies = companies + c["name"] + ", "
-				self.speak_dialog("movie.production.multiple", {"companies": companies, "movie": movie})
+				self.speak_dialog("movie.production.multiple", {"companies": companies, "movie": movie, "lastcompany": lastCompany})
 		except AttributeError:
 			self.speak_dialog("no.info", {"movie": movie})
 
