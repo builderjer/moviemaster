@@ -23,7 +23,7 @@
                         "value": "en_US"
                     }
                 ]
-            }
+            },
             {
             	"name": "Cast Depth",
             	"fields": [
@@ -35,8 +35,8 @@
             			"placeholder": "How many cast members to search for"
 					}
 				]
-			}
-			            {
+			},
+			{
             	"name": "Genre Depth",
             	"fields": [
             		{
@@ -47,8 +47,8 @@
             			"placeholder": "How many genres to search for"
 					}
 				]
-			}
-			            {
+			},
+			{
             	"name": "Production Company Depth",
             	"fields": [
             		{
