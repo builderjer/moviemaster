@@ -1,5 +1,5 @@
-## Tmdb
-Gets information from tmdb
+# <img src='PrimaryLogo_Green.png' width='50' style='vertical-align:bottom'/> TMDB
+Gets information about lots of movies from tmdb - www.themoviedb.org
 
 ## Description
 Uses the tmdb api to call information about movies, actors, production conys and the like
@@ -16,7 +16,13 @@ Uses the tmdb api to call information about movies, actors, production conys and
 ## Instalation
 use msm to install
 
+```
 mycroft-msm install https://github.com/builderjer/tmdb-skill.git
+```
+
+* Sign op on https://www.themoviedb.org/account/signup
+* Get API key from https://www.themoviedb.org/settings/api
+* Fill out API key on https://home.mycrof.ai
 
 ## ToDo
 There are several other parts provided by the tmdb api.  While this skill allows movie information, eventually it will include the other api capabilities.
