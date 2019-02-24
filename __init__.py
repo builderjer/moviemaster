@@ -119,7 +119,7 @@ class Tmdb(MycroftSkill):
 			
 		try:
 			movie = self.movieDetails.title
-			release_date = self.movieDetails.release_date
+			release_date = self.getDate()
 			self.speak_dialog("movie.year", {"movie": movie, "year": release_date})
 						
 		except AttributeError:
