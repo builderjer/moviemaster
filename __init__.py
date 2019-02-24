@@ -197,9 +197,10 @@ class Tmdb(MycroftSkill):
 				self.speak_dialog("movie.genre.single", {"movie": movie, "genre": genres[0]["name"]})
 			if noOfGenres > 1:
 				genreList = ""
+				genreListLast = genres.pop()
 				for g in genres:
 					genreList = genreList + g["name"] + ", "
-				self.speak_dialog("movie.genre.multiple", {"genrelist": genreList})
+				self.speak_dialog("movie.genre.multiple", {"genrelist": genreList, "genrelistlast": genreListLast})
 		except AttributeError:
 			self.speak_dialog("no.info", {"movie": movie})
 
