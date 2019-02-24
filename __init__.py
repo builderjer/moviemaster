@@ -170,6 +170,7 @@ class Tmdb(MycroftSkill):
 			company = self.getProductionCo()
 			noOfCo = len(company)
 			if noOfCo == 1:
+			
 				self.speak_dialog("movie.production.single", {"movie": movie, "company": company[0]["name"]})
 			if noOfCo > 1:
 				companies = ""
