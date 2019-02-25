@@ -28,11 +28,11 @@ class Tmdb(MycroftSkill):
         super(Tmdb, self).__init__(name="Tmdb")
         self.movieID = None
         self.movieDetails = None
-        self.movieGenres = self.getGenres()
 
     def initialize(self):
         TMDB["tmdb"].api_key = self.settings.get("apiv3")
         TMDB["tmdb"].language = self.lang
+        self.movieGenres = self.getGenres()
 
     def getGenres(self):
         genres = {
