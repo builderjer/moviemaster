@@ -95,6 +95,47 @@ class Tmdb(MycroftSkill):
         depth = self.settings.get("genre_depth")
         return self.movieDetails.genres[:depth]
 
+    def getPopularMovies(self):
+        # TODO: Give its own setting
+        # TODO: Add error checking?  Here or in intent?
+        depth = self.settings.get("genre_depth")
+        popular = TMDB["movie"].popular()[:depth]
+        popularLast = popular.pop()
+        dialog = ""
+        for movie in popular:
+            dialog = dialog + ", " + movie.title
+        return dialog + "and {}".format(popularLast)
+
+    def getTopMovies(self):
+        # TODO: Give its own setting
+        depth = self.settings.get("genre_depth")
+        top = TMDB["movie"].top_rated()[:depth]
+        topLast = top.pop()
+        dialog = ""
+        for movie in top:
+            dialog = dialog + ", " + movie.title
+        return dialog + " and {}".format(topLast)
+
+    def getNowPlayingMovies(self):
+        # TODO: Give its own setting
+        depth = self.settings.get("genre_depth")
+        nowPlaying = TMDB["movie"].now_playing()[:depth]
+        nowLast = nowPlaying.pop()
+        dialog = ""
+        for movie in nowPlaying:
+            dialog = dialog + ", " + movie.title
+        return dialog + " and {}".format(nowLast)
+
+    def getMovieRecommendations(self, movieID):
+        # TODO: Give its own setting
+        depth = self.settings.get("genre_depth")
+        recommend = TMDB["movie"].recommendations(movieID)[:depth]
+        recommendLast = recommend.pop()
+        dialog = ""
+        for movie in recommend:
+            dialog = dialog + ", " + movie.title
+        return dialog + " or {}".format(recommendLast)
+
     @intent_file_handler("movie.information.intent")
     def handle_movie_information(self, message):
         movie = message.data.get("movie")
@@ -185,6 +226,30 @@ class Tmdb(MycroftSkill):
         else:
             self.speak_dialog("no.info", {"movie": movie})
 
+    @intent_file_handler("movie.popular.intent")
+    def handle_popular_movies(self, message):
+        try:
+            popular = self.getPopularMovies()
+            self.speak_dialog("movie.popular", {"popularlist": popular})
+        except:
+            self.speak_dialog("no.info.general", {})
+
+    @intent_file_handler("movie.top.intent")
+    def handle_top_movies(self, message):
+        try:
+            top = self.getTopMovies()
+            self.speak_dialog("movie.top", {"toplist": top})
+        except:
+            self.speak_dialog("no.info.general", {})
+
+    @intent_file_handler("movie.recommendations.intent")
+    def handle_movie_recommendations(self, message):
+        movie = message.data.get("movie")
+        if self.checkMovie(movie):
+            self.speak_dialog("movie.recommendations", {"movielist": self.getMovieRecommendations(self.movieID), "movie": movie})
+        else:
+            self.speak_dialog("no.info.general", {})
+            
 ##################
 # Discover Section
 ##################
