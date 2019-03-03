@@ -15,7 +15,7 @@ TMDB = {
         # "company": tmdbv3api.Company(),
         # "configuration": tmdbv3api.Configuration(),
         "discover": tmdbv3api.Discover(),
-        "genre": tmdbv3api.Genre(),
+        # "genre": tmdbv3api.Genre(),
         "movie": tmdbv3api.Movie()
         # "person": tmdbv3api.Person(),
         # "season": tmdbv3api.Season(),
@@ -32,14 +32,6 @@ class Tmdb(MycroftSkill):
     def initialize(self):
         TMDB["tmdb"].api_key = self.settings.get("apiv3")
         TMDB["tmdb"].language = self.lang
-        self.movieGenres = self.getGenres()
-
-    def getGenres(self):
-        genres = {
-            "movies": TMDB["genre"].movie_list(),
-            "television": TMDB["genre"].tv_list()
-            }
-        return genres
 
 ##################
 # Movie Section
