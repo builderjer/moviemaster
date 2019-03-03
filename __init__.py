@@ -33,14 +33,14 @@ class Tmdb(MycroftSkill):
     def initialize(self):
         TMDB["tmdb"].api_key = self.settings.get("apiv3")
         TMDB["tmdb"].language = self.lang
-#        self.movieGenres = self.getGenres()
+        self.movieGenres = self.getGenres()
 
-#    def getGenres(self):
-#        genres = {
-#            "movies": TMDB["genre"].movie_list(),
-#            "television": TMDB["genre"].tv_list()
-#            }
-#        return genres
+    def getGenres(self):
+        genres = {
+            "movies": TMDB["genre"].movie_list(),
+            "television": TMDB["genre"].tv_list()
+            }
+        return genres
 
 ##################
 # Movie Section
