@@ -16,10 +16,10 @@ TMDB = {
         # "configuration": tmdbv3api.Configuration(),
         "discover": tmdbv3api.Discover(),
         "genre": tmdbv3api.Genre(),
-        "movie": tmdbv3api.Movie()
+        "movie": tmdbv3api.Movie(),
         # "person": tmdbv3api.Person(),
         # "season": tmdbv3api.Season(),
-        # "tv": tmdbv3api.TV()
+        "tv": tmdbv3api.TV()
         }
 
 
@@ -28,11 +28,13 @@ class Tmdb(MycroftSkill):
         super(Tmdb, self).__init__(name="Tmdb")
         self.movieID = None
         self.movieDetails = None
+        self.tvID = None
+        self.tvDetails = None
 
     def initialize(self):
         TMDB["tmdb"].api_key = self.settings.get("apiv3")
         TMDB["tmdb"].language = self.lang
-        self.movieGenres = self.getGenres()
+        self.Genres = self.getGenres()
 
     def getGenres(self):
         genres = {
@@ -249,7 +251,38 @@ class Tmdb(MycroftSkill):
             self.speak_dialog("movie.recommendations", {"movielist": self.getMovieRecommendations(self.movieID), "movie": movie})
         else:
             self.speak_dialog("no.info.general", {})
-            
+
+##################
+# TV Section
+##################
+
+    def getTVDetails(self, show):
+        self.resetTVDetails()
+        self.tvID = TMDB["tv"].search(show)[:1][0].id
+        self.tvDetails = TMDB["tv"].details(self.tvID)
+
+    def resetTVDetails(self):
+        self.tvID = None
+        self.tvDetails = None
+
+    def checkTVShow(self, show):
+        if self.tvDetails and self.tvDetails.title.lower() == show:
+            return True
+        else:
+            try:
+                self.getTVDetails(show)
+                return True
+            except IndexError:
+                self.resetTVDetails()
+            return False
+
+    def getTVOverview(self):
+        return self.tvDetails.overview
+
+    def getTVGenres(self):
+        depth = self.settings.get("genre_depth")
+        return self.movieDetails.genres[:depth]
+
 ##################
 # Discover Section
 ##################
@@ -258,12 +291,22 @@ class Tmdb(MycroftSkill):
         # TODO: Put depth settings in home.ai?
         depth = self.settings.get("search_depth")
         genreID = None
-        for g in self.movieGenres["movies"]:
+        for g in self.Genres["movies"]:
             if genre == g.name.lower():
                 genreID = g.id
                 return TMDB["discover"].discover_movies({"sort_by": "popularity.desc", "with_genres": genreID})[:depth]
         return False
 
+    def getGenreTV(self, genre):
+        # TODO: Watch the Holy Grail
+        depth = self.settings.get("search_depth")
+        genreID = None
+        for g in self.Genres["television"]:
+            if genre == g.name.lower():
+                genreID = g.id
+                return TMDB["discover"].discover_tv_shows({"sort_by": "popularity.desc", "with_genres": genreID})[:depth]
+        return False
+    
     @intent_file_handler("genre.movie.search.intent")
     def handle_genre_movie_search(self, message):
         genre = message.data.get("genre")
