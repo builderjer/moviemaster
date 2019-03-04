@@ -5,6 +5,7 @@ from mycroft.util.format import pronounce_number, nice_date, nice_number
 import tmdbv3api
 
 __author__ = "builderjer@github.com"
+__version__ = "0.1.2"
 
 LOGGER = getLogger(__name__)
 
@@ -318,6 +319,15 @@ class Tmdb(MycroftSkill):
         else:
             self.speak_dialog("bad.genre.catagory", {"genre": genre})
 
-
+    @intent_file_handler("genre.tv.search.intent")
+    def handle_genre_movie_search(self, message):
+        genre = message.data.get("genre")
+        goodGenre = self.getGenreMovies(genre)
+        if goodGenre:
+            self.speak_dialog("genre.tv.search", {"genre": genre})
+            for g in goodGenre:
+                self.speak(g.title)
+        else:
+            self.speak_dialog("bad.genre.catagory", {"genre": genre})
 def create_skill():
     return Tmdb()
