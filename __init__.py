@@ -282,7 +282,7 @@ class Tmdb(MycroftSkill):
 
     def getTVGenres(self):
         depth = self.settings.get("genre_depth")
-        return self.movieDetails.genres[:depth]
+        return self.tvDetails.genres[:depth]
 
 ##################
 # Discover Section
@@ -317,17 +317,17 @@ class Tmdb(MycroftSkill):
             for g in goodGenre:
                 self.speak(g.title)
         else:
-            self.speak_dialog("bad.genre.catagory", {"genre": genre})
+            self.speak_dialog("bad.movie.genre.catagory", {"genre": genre})
 
     @intent_file_handler("genre.tv.search.intent")
-    def handle_genre_movie_search(self, message):
+    def handle_genre_tv_search(self, message):
         genre = message.data.get("genre")
-        goodGenre = self.getGenreMovies(genre)
+        goodGenre = self.getGenreTV(genre)
         if goodGenre:
             self.speak_dialog("genre.tv.search", {"genre": genre})
             for g in goodGenre:
-                self.speak(g.title)
+                self.speak(g.name)
         else:
-            self.speak_dialog("bad.genre.catagory", {"genre": genre})
+            self.speak_dialog("bad.tv.genre.catagory", {"genre": genre})
 def create_skill():
     return Tmdb()

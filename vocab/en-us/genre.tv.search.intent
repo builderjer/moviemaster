@@ -1,2 +1,2 @@
-(list|find) (TV shows|television shows|shows) that are (a| ) {genre}
-(list|find) {genre} (TV shows|television shows|shows)
+(list|find|get) (TV shows|television shows|shows) that are (|a) {genre}
+(list|find|get) {genre} (TV shows|television shows|shows)
