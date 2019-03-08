@@ -1,2 +1,2 @@
-the movie {movie} is about this.
-here is a synopsis of the film {movie}.
+the (movie|film) {movie} is about this.
+here is a synopsis of the (movie|film) {movie}.

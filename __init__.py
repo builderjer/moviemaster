@@ -9,7 +9,6 @@ __version__ = "0.1.2"
 
 LOGGER = getLogger(__name__)
 
-# tmdbv3api has several files so we will access them with a dictionary
 TMDB = {
         "tmdb": tmdbv3api.TMDb(),
         # "collection": tmdbv3api.Collection(),
@@ -35,9 +34,9 @@ class Tmdb(MycroftSkill):
     def initialize(self):
         TMDB["tmdb"].api_key = self.settings.get("apiv3")
         TMDB["tmdb"].language = self.lang
-        self.Genres = self.getGenres()
+        self.AvalGenres = self.getAvalGenres()
 
-    def getGenres(self):
+    def getAvalGenres(self):
         genres = {
             "movies": TMDB["genre"].movie_list(),
             "television": TMDB["genre"].tv_list()
@@ -68,11 +67,14 @@ class Tmdb(MycroftSkill):
                 self.resetMovieDetails()
             return False
 
+    def getMovieOverview(self):
+        return self.movieDetails.overview
+
     def getMovieDate(self):
         return nice_date(datetime.strptime(self.movieDetails.release_date.replace("-", " "), "%Y %m %d"))
 
     def getMovieCast(self):
-        depth = self.settings.get("cast_depth")
+        depth = self.settings.get("search_depth")
         return self.movieDetails.casts['cast'][:depth]
 
     def getMovieBudget(self):
@@ -82,26 +84,21 @@ class Tmdb(MycroftSkill):
         return pronounce_number(self.movieDetails.revenue)
 
     def getMovieProductionCo(self):
-        depth = self.settings.get("pro_co_depth")
+        depth = self.settings.get("search_depth")
         return self.movieDetails.production_companies[:depth]
 
     def getMovieRuntime(self):
         return nice_number(self.movieDetails.runtime)
 
-    def getMovieOverview(self):
-        return self.movieDetails.overview
-
     def getMovieTagline(self):
         return self.movieDetails.tagline
 
     def getMovieGenres(self):
-        depth = self.settings.get("genre_depth")
+        depth = self.settings.get("search_depth")
         return self.movieDetails.genres[:depth]
 
     def getPopularMovies(self):
-        # TODO: Give its own setting
-        # TODO: Add error checking?  Here or in intent?
-        depth = self.settings.get("genre_depth")
+        depth = self.settings.get("search_depth")
         popular = TMDB["movie"].popular()[:depth]
         popularLast = popular.pop()
         dialog = ""
@@ -110,8 +107,7 @@ class Tmdb(MycroftSkill):
         return dialog + "and {}".format(popularLast)
 
     def getTopMovies(self):
-        # TODO: Give its own setting
-        depth = self.settings.get("genre_depth")
+        depth = self.settings.get("search_depth")
         top = TMDB["movie"].top_rated()[:depth]
         topLast = top.pop()
         dialog = ""
@@ -121,7 +117,7 @@ class Tmdb(MycroftSkill):
 
     def getNowPlayingMovies(self):
         # TODO: Give its own setting
-        depth = self.settings.get("genre_depth")
+        depth = self.settings.get("search_depth")
         nowPlaying = TMDB["movie"].now_playing()[:depth]
         nowLast = nowPlaying.pop()
         dialog = ""
@@ -131,13 +127,27 @@ class Tmdb(MycroftSkill):
 
     def getMovieRecommendations(self, movieID):
         # TODO: Give its own setting
-        depth = self.settings.get("genre_depth")
+        depth = self.settings.get("search_depth")
         recommend = TMDB["movie"].recommendations(movieID)[:depth]
         recommendLast = recommend.pop()
         dialog = ""
         for movie in recommend:
             dialog = dialog + ", " + movie.title
         return dialog + " or {}".format(recommendLast)
+
+    @intent_file_handler("movie.description.intent")
+    def handle_movie_description(self, message):
+        movie = message.data.get("movie")
+        if self.checkMovie(movie):
+            overview = self.getMovieOverview(movie)
+            if overview is '':
+                self.speak_dialog("no.info", {"movie": movie})
+                return
+            self.speak_dialog("movie.description", {"movie": movie})
+            for sentence in overview.split('. '):
+                self.speak(sentence, wait=True)
+        else:
+            self.speak_dialog("no.info", {"movie": movie})
 
     @intent_file_handler("movie.information.intent")
     def handle_movie_information(self, message):
@@ -155,20 +165,6 @@ class Tmdb(MycroftSkill):
             movie = self.movieDetails.title
             release_date = self.getMovieDate()
             self.speak_dialog("movie.year", {"movie": movie, "year": release_date})
-        else:
-            self.speak_dialog("no.info", {"movie": movie})
-
-    @intent_file_handler("movie.description.intent")
-    def handle_movie_description(self, message):
-        movie = message.data.get("movie")
-        if self.checkMovie(movie):
-            overview = self.movieDetails.overview
-            if overview is '':
-                self.speak_dialog("no.info", {"movie": movie})
-                return
-            self.speak_dialog("movie.description", {"movie": movie})
-            for sentence in overview.split('. '):
-                self.speak(sentence, wait=True)
         else:
             self.speak_dialog("no.info", {"movie": movie})
 
@@ -292,7 +288,7 @@ class Tmdb(MycroftSkill):
         # TODO: Put depth settings in home.ai?
         depth = self.settings.get("search_depth")
         genreID = None
-        for g in self.Genres["movies"]:
+        for g in self.AvalGenres["movies"]:
             if genre == g.name.lower():
                 genreID = g.id
                 return TMDB["discover"].discover_movies({"sort_by": "popularity.desc", "with_genres": genreID})[:depth]
@@ -302,7 +298,7 @@ class Tmdb(MycroftSkill):
         # TODO: Watch the Holy Grail
         depth = self.settings.get("search_depth")
         genreID = None
-        for g in self.Genres["television"]:
+        for g in self.AvalGenres["television"]:
             if genre == g.name.lower():
                 genreID = g.id
                 return TMDB["discover"].discover_tv_shows({"sort_by": "popularity.desc", "with_genres": genreID})[:depth]
