@@ -1,4 +1,2 @@
-# Here is the cast of {movie}
-Her er casten af ​​{movie}
-# The following people (star|play|act) in the movie {movie}
-Følgende personer (star | play | act) i filmen {movie}
+Her er casten af ​​{movie}; {actorlist} og {lastactor}
+Følgende personer (star | play | act) i filmen {movie}; {actorlist} og {lastactor}
