@@ -1,0 +1,5 @@
+Filmen {movie}, varer i {runtime} minutter.
+# The (movie|film|flick) {movie} is {runtime} minutes long.
+Filmen {movie} er {runtime} minutter lang.
+# Watching {movie}; You can expect about {runtime} minutes before you can have a bathroom break.
+Hvis du ser {movie}; Du kan forvente omkring {runtime} minutter, før du kan få en tissepause.

@@ -1,0 +1,2 @@
+(list | find) film der er (i genren | en) {genre}
+(list | find) {genre} film
