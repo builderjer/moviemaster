@@ -1,4 +1,3 @@
-# what genres does the (movie|film|flick) {movie} belong to
-Hvilke genrer tilhører (film | filmen | flick) {movie}
-# what are the genres of the (movie|film|flick) {movie}
-hvad er genren til (film | filmen | flick) {movie}
+hvad (genrer | genre) tilhører (filmen|) {movie}
+hvad er (genrer | genre) af (filmen|) {movie}
+hvad (genrer | genre) er (filmem | ) {film}
