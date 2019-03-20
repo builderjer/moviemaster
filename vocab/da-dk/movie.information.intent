@@ -1,4 +1,4 @@
-# (find|get|look for|is there) (information|info) (on|about) the (movie|film) {movie}
-(find | slå op | er der) (information | info) (på | om) (film | filmen) {movie}
-# (give|tell|get) (|me|us) (information|info) (on|about) the (movie|film) {movie}
-(oplys | fortæl | find) (| mig | os) (information | info) (på | om) (film | filmen) {movie}
+(find | led efter | er der) (information | info) (på | om) (filmen |) {movie}
+(giv | fortæl | hent) (| mig | os) (information | info) (på | om) (filmen | ) {movie}
+# (do you have|can you get) (info|information) on the (movie|film|flick) {movie}
+(har du | kan du få) (info | information) (på| om) (filmen | ) {movie}

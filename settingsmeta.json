@@ -2,64 +2,28 @@
     "name": "TMDB",
     "skillMetadata": {
         "sections": [
-            {
-                "name": "API V3 key",
-                "fields": [
-                    {
-                        "name": "apiv3",
-                        "type": "text",
-                        "label": "V3 key",
-                        "value": "api key"
-                    }
-                ]
-            },
-            {
-            	"name": "Cast Depth",
-            	"fields": [
-            		{
-            			"name": "cast_depth",
-            			"type": "number",
-            			"label": "Depth of cast search",
-            			"value": 5,
-            			"placeholder": "How many cast members to search for"
-					}
-				]
-			},
-			{
-            	"name": "Genre Depth",
-            	"fields": [
-            		{
-            			"name": "genre_depth",
-            			"type": "number",
-            			"label": "Depth of genre search",
-            			"value": 4,
-            			"placeholder": "How many genres to search for"
-					}
-				]
-			},
-			{
-            	"name": "Production Company Depth",
-            	"fields": [
-            		{
-            			"name": "pro_co_depth",
-            			"type": "number",
-            			"label": "Depth of production company search",
-            			"value": 4,
-            			"placeholder": "How many production companies to search for"
-					}
-				]
-			},
-			{
-				"name": "Search Depth",
-				"fields": [
-					{
-						"name": "search_depth",
-						"type": "number",
-						"label": "Number of movies or TV shows to list when searching.",
-						"value": 5
-						}
-					]
-				}
+	    {
+		"name": "API V3 key",
+		"fields": [
+		    {
+			"name": "apiv3",
+			"type": "text",
+			"label": "V3 key",
+			"value": "api key"
+		    }
+		]
+	    },
+	    {
+		"name": "Search Depth",
+		"fields": [
+		    {
+			"name": "search_depth",
+			"type": "number",
+			"label": "Number of movies or TV shows to list when searching.",
+			"value": 5
+		    }
+		]
+	    }
         ]
     }
 }
