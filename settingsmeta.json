@@ -2,28 +2,28 @@
     "name": "TMDB",
     "skillMetadata": {
         "sections": [
-            {
-                "name": "API V3 key",
-                "fields": [
-                    {
-                        "name": "apiv3",
-                        "type": "text",
-                        "label": "V3 key",
-                        "value": "api key"
-                    }
-                ]
-            },
-			{
-				"name": "Search Depth",
-				"fields": [
-					{
-						"name": "search_depth",
-						"type": "number",
-						"label": "Number of movies or TV shows to list when searching.",
-						"value": 5
-						}
-					]
-				}
+	    {
+		"name": "API V3 key",
+		"fields": [
+		    {
+			"name": "apiv3",
+			"type": "text",
+			"label": "V3 key",
+			"value": "api key"
+		    }
+		]
+	    },
+	    {
+		"name": "Search Depth",
+		"fields": [
+		    {
+			"name": "search_depth",
+			"type": "number",
+			"label": "Number of movies or TV shows to list when searching.",
+			"value": 5
+		    }
+		]
+	    }
         ]
     }
 }
