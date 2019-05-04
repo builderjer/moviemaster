@@ -2,8 +2,8 @@
 Find information about movies, TV shows, actors and production details.
 
 ## About
-This skill uses tmdbv3api avaliable on GitHub at [tmdbv3api](https://github.com/AnthonyBloomer/tmdbv3api.git)
-This product uses the TMDb API but is not endorsed or certified by TMDb.  Information avaliable at [TMDb](https://www.themoviedb.org/)
+This skill uses tmdbv3api avaliable on GitHub at [tmdbv3api](https://github.com/AnthonyBloomer/tmdbv3api.git) and the TMDb API but is not endorsed or certified by TMDb.  Information avaliable at [TMDb](https://www.themoviedb.org/)
+
 Easily find information, such as a description, or cast from a movie or tv show with your voice.
 
 ## Examples
