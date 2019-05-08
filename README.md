@@ -1,8 +1,7 @@
-# <img src='PrimaryLogo_Green.png' width='50' style='vertical-align:bottom'/> TMDB
+# <img src='PrimaryLogo_Green.png' width='50' style='vertical-align:bottom'/> MOVIEMASTER
 Find information about movies, TV shows, actors and production details.
 
 ## About
-This skill uses tmdbv3api avaliable on GitHub at [tmdbv3api](https://github.com/AnthonyBloomer/tmdbv3api.git) and the TMDb API but is not endorsed or certified by TMDb.  Information avaliable at [TMDb](https://www.themoviedb.org/)
 
 Easily find information, such as a description, or cast from a movie or tv show with your voice.
 
@@ -18,31 +17,42 @@ Easily find information, such as a description, or cast from a movie or tv show 
 ## Installation
 Installation should be pretty much effortless.
 
-### use msm to install
-msm should install the depencencies automatically
+A free API key is **REQUIRED** for this skill to work
+
+* Signup [here](https://www.themoviedb.org/account/signup) for a FREE account
+
+* Get API key [here](https://www.themoviedb.org/settings/api)
+  * You will get a v.3 key and a v.4 key
+  * We will use the v.3 for this version **REMEMBER THIS, YOU WILL NEED IT**
+
+### Use mycroft-msm to install automatically
+Enter the following command into your terminal
 
 ```
 mycroft-msm install https://github.com/builderjer/tmdb-skill.git
 ```
 
-### manual install
-install tmdbv3api through pip
+msm should install the dependcencies automatically
+If not, you can manually install from pip with the command
+
 ```
 pip install tmdbv3api
 ```
-change into your skills directory and clone from repository
-on linux
+
+### Manual Installation
+Install the dependcencies with the above command
+
+Change into your skills directory and clone from repository
+on linux or picroft (not tested on Windows)
+
 ```
 cd /opt/mycroft/skills/
-git clone https://github.com/builderjer/tmdb-skill.git 
+git clone https://github.com/builderjer/moviemaster.git 
 ```
 
-* Go to https://www.themoviedb.org/account/signup
-  * Signing up is free
-* Get API key from https://www.themoviedb.org/settings/api
-  * You will get a v.3 key and a v.4 key
-  * We will use the v.3 for this version
-* Fill out API key on https://home.mycrof.ai
+### After Installation
+
+* Fill out API key on https://home.mycroft.ai
 * Ask a question about a movie
   * "Hey Mycroft, tell me about the movie Monty Python and the Holy Grail"
   * Listen to the awesome responce!!
@@ -55,9 +65,14 @@ git clone https://github.com/builderjer/tmdb-skill.git
 #Movies
 #TVshows
 #actors
+#Mark I
 
 ## ToDo
 Keep checking for more updates.
 
 ## Credits
+This skill uses tmdbv3api avaliable on GitHub at [tmdbv3api](https://github.com/AnthonyBloomer/tmdbv3api.git)
+
+It also uses the TMDb API but is not endorsed or certified by TMDb.  Information avaliable at [TMDb](https://www.themoviedb.org/)
+
 builderjer@github.com
