@@ -17,7 +17,6 @@ TMDB = {
 		"discover": tmdbv3api.Discover(),
 		"genre": tmdbv3api.Genre(),
 		"movie": tmdbv3api.Movie(),
-		"movie": tmdbv3api.Movie(),
 		# "person": tmdbv3api.Person(),
 		# "season": tmdbv3api.Season(),
 		"tv": tmdbv3api.TV()
