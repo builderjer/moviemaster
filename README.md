@@ -1,6 +1,8 @@
 # <img src='PrimaryLogo_Green.png' width='50' style='vertical-align:bottom'/> MOVIEMASTER
 Find information about movies, TV shows, actors and production details.
 
+# **Development Version - Not always working**
+
 ## About
 
 Easily find information, such as a description, or cast from a movie or tv show with your voice.

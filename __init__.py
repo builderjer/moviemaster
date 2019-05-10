@@ -56,6 +56,9 @@ class MovieMaster(MycroftSkill):
 		self.movieGenres = TMDB["genre"].movie_list()
 		self.tvGenres = TMDB["genre"].tv_list()
 	
+	def getMovieID(self, movie):
+		return TMDB["movie"].search(movie)[:1][0].id
+		
 	@property
 	def api(self):
 		return self._api
@@ -70,7 +73,10 @@ class MovieMaster(MycroftSkill):
 	
 	@movieID.setter
 	def movieID(self, movie):
-		self._movieID = TMDB["movie"].search(movie)[:1][0].id
+		try:
+			self._movieID = TMDB["movie"].search(movie)[:1][0].id
+		except IndexError:
+			self._movieID = 0
 	
 	@property
 	def movieGenres(self):
@@ -102,8 +108,29 @@ class MovieMaster(MycroftSkill):
 	@intent_file_handler("movie.description.intent")
 	def handle_movie_description(self, message):
 		movie = message.data.get("movie")
-		if self.movieDetails.title.lower() != movie:
-			self.movieDetails = self.movieID(movie)
+		self.movieID = movie
+		if self.movieID != 0:
+			self.movieDetails = movie
+			overview = self.movieDetails.overview
+			if overview is not "":
+				self.speak_dialog("movie.description", {"movie": movie})
+				# I use this to slow down the speech output.
+				# BUG Not very reliable.  Does not work if saying initials such as U. S. A. 
+				for sentence in overview.split(". "):
+					self.speak(sentence, wait=True)
+		else:
+			self.speak_dialog("no.info", {"movie": movie})
 
+	@intent_file_handler("movie.information.intent")
+	def handle_movie_information(self, message):
+		movie = message.data.get("movie")
+		self.movieID = movie
+		if self.movieID != 0:
+			self.movieDetails = movie
+			self.speak_dialog("movie.info.response", {"movie": self.movieDetails.title, "year": self.movieDetails.release_date, "budget": self.movieDetails.budget})
+			self.speak(self.movieDetails.tagline)
+		else:
+			self.speak_dialog("no.info", {"movie": movie})
+			
 def create_skill():
 	return MovieMaster()
