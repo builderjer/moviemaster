@@ -29,7 +29,7 @@ A free API key is **REQUIRED** for this skill to work
 Enter the following command into your terminal
 
 ```
-mycroft-msm install https://github.com/builderjer/tmdb-skill.git
+mycroft-msm install https://github.com/builderjer/moviemaster.git
 ```
 
 msm should install the dependcencies automatically
