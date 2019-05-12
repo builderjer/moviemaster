@@ -67,16 +67,16 @@ class MovieMaster(MycroftSkill):
 	def api(self, apiNum):
 		self._api = apiNum
 	
-	@property
-	def movieID(self):
-		return self._movieID
+	#@property
+	#def movieID(self):
+		#return self._movieID
 	
-	@movieID.setter
-	def movieID(self, movie):
-		try:
-			self._movieID = TMDB["movie"].search(movie)[:1][0].id
-		except IndexError:
-			self._movieID = 0
+	#@movieID.setter
+	#def movieID(self, movie):
+		#try:
+			#self._movieID = TMDB["movie"].search(movie)[:1][0].id
+		#except IndexError:
+			#self._movieID = 0
 	
 	@property
 	def movieGenres(self):
@@ -100,37 +100,43 @@ class MovieMaster(MycroftSkill):
 	
 	@movieDetails.setter
 	def movieDetails(self, movie):
-		try:
-			self._movieDetails = TMDB["movie"].details(self.movieID)
-		except IndexError:
-			self.speak_dialog("no.info", {"movie": movie})
+		self._movieDetails = TMDB["movie"].details(TMDB["movie"].search(movie)[:1][0].id)
 	
 	@intent_file_handler("movie.description.intent")
 	def handle_movie_description(self, message):
 		movie = message.data.get("movie")
-		self.movieID = movie
-		if self.movieID != 0:
+		try:
 			self.movieDetails = movie
-			overview = self.movieDetails.overview
-			if overview is not "":
+			if self.movieDetails.overview is not "":
 				self.speak_dialog("movie.description", {"movie": movie})
-				# I use this to slow down the speech output.
-				# BUG Not very reliable.  Does not work if saying initials such as U. S. A. 
-				for sentence in overview.split(". "):
-					self.speak(sentence, wait=True)
-		else:
+				self.speak(self.movieDetails.overview)
+			else:
+				self.speak_dialog("no.info", {"movie": movie})
+		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
 
 	@intent_file_handler("movie.information.intent")
 	def handle_movie_information(self, message):
 		movie = message.data.get("movie")
-		self.movieID = movie
-		if self.movieID != 0:
+		try:
 			self.movieDetails = movie
 			self.speak_dialog("movie.info.response", {"movie": self.movieDetails.title, "year": self.movieDetails.release_date, "budget": self.movieDetails.budget})
 			self.speak(self.movieDetails.tagline)
-		else:
+		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
+	
+	@intent_file_handler("movie.year.intent")
+	def handle_movie_year(self, message):
+		movie = message.data.get("movie")
+		try:
+			self.movieDetails = movie
+			self.speak_dialog("movie.year", {"movie": self.movieDetails.title, "year": self.movieDetails.release_date})
+		except IndexError:
+			self.speak_dialog("no.info", {"movie": movie})
+	
+	@intent_file_handler("movie.cast.intent")
+	def handle_movie_cast(self, message):
+		movie = message.data.get("movie")
 			
 def create_skill():
 	return MovieMaster()
