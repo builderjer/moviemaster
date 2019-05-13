@@ -137,6 +137,9 @@ class MovieMaster(MycroftSkill):
 	@intent_file_handler("movie.cast.intent")
 	def handle_movie_cast(self, message):
 		movie = message.data.get("movie")
+		try:
+			self.movieDetails = movie
+			cast = movieDetails.casts["cast"][:self.settings.get("search_depth")]
 			
 def create_skill():
 	return MovieMaster()
