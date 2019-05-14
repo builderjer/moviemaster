@@ -56,9 +56,6 @@ class MovieMaster(MycroftSkill):
 		self.movieGenres = TMDB["genre"].movie_list()
 		self.tvGenres = TMDB["genre"].tv_list()
 	
-	def getMovieID(self, movie):
-		return TMDB["movie"].search(movie)[:1][0].id
-		
 	@property
 	def api(self):
 		return self._api
@@ -77,12 +74,12 @@ class MovieMaster(MycroftSkill):
 	
 	@property
 	def popularMovies(self):
-		self._popularMovies = TMDB["movie"].popular()[:search_depth]
+		#self._popularMovies = TMDB["movie"].popular()[:search_depth]
 		return self._popularMovies
 	
-	#@popularMovies.setter
-	#def popularMovies(self, search_depth):
-		#self._popularMovies = TMDB["movie"].popular()[:search_depth]
+	@popularMovies.setter
+	def popularMovies(self, search_depth):
+		self._popularMovies = TMDB["movie"].popular()[:search_depth]
 		
 	@property
 	def tvGenres(self):
@@ -147,7 +144,7 @@ class MovieMaster(MycroftSkill):
 		movie = message.data.get("movie")
 		try:
 			self.movieDetails = movie
-			cast = movieDetails.casts["cast"][:self.settings.get("search_depth")]
+			cast = self.movieDetails.casts["cast"][:self.settings.get("search_depth")]
 			# Create a list to store the cast to be included in the dialog
 			actorList = ""
 			# Get the last actor in the list so that the dialog can say it properly
@@ -218,25 +215,28 @@ class MovieMaster(MycroftSkill):
 		except IndexError:
 			self.speak_dialog("no.info.general", {})
 	
-	#@intent_file_handler("movie.popular.intent")
-	#def handle_popular_movies(self, message):
-		#""" Gets the daily popular movies.
+	@intent_file_handler("movie.popular.intent")
+	def handle_popular_movies(self, message):
+		""" Gets the daily popular movies.
 		
-		#The list changes daily, and are not just recent movies.
+		The list changes daily, and are not just recent movies.
 		
-		#The search_depth setting is avaliable at home.mycroft.ai
-		#"""
-		#try:
-			#self.popularMovies = self.settings.get["search_depth"]
-			## Lets see...I think we will set up the dialog again.
-			#lastMovie = self.popularMovies.pop()
-			#popularDialog = ""
-			#for movie in self.popularMovies:
-				#popularDialog = popularDialog + ", " + movie.title
-			#popularDialog = popularDialog + "and {}".format(lastMovie)
-			#self.speak_dialog("movie.popular", {"popularlist": popularDialog})
-		#except IndexError:
-			#self.speak_dialog("no.info.general", {})
+		The search_depth setting is avaliable at home.mycroft.ai
+		"""
+		try:
+			self.popularMovies = self.settings.get("search_depth")
+			# Lets see...I think we will set up the dialog again.
+			lastMovie = self.popularMovies.pop().title
+			popularDialog = ""
+			for movie in self.popularMovies:
+				if popularDialog == "":
+					popularDialog = movie.title
+				else:
+					popularDialog = popularDialog + ", " + movie.title
+			popularDialog = popularDialog + " and {}".format(lastMovie)
+			self.speak_dialog("movie.popular", {"popularlist": popularDialog})
+		except IndexError:
+			self.speak_dialog("no.info.general", {})
 	
 	@intent_file_handler("movie.top.intent")
 	def handle_top_movies(self, message):
