@@ -53,7 +53,6 @@ class MovieMaster(MycroftSkill):
 		# Set the language 
 		TMDB["tmdb"].language = self.lang
 		
-		
 		# Get the genres of the movies and tv shows
 		self.movieGenres = TMDB["genre"].movie_list()
 		self.tvGenres = TMDB["genre"].tv_list()
