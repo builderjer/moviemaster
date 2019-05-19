@@ -41,16 +41,18 @@ class MovieMaster(MycroftSkill):
 		# An API key is required for this to work.  See the README.md for more info
 		self.api = self.settings.get("apiv3")
 		if self.api is not "" or self.api is not None:
+			LOGGER.info(self.api)
 			try:
 				TMDB["tmdb"].api_key = self.api
 			except Exception as e:
-				self.LOGGER.info(e)
+				LOGGER.info(e)
 				self.api = None
 		else:
 			self.speak("You must get an API key to use this skill")
 			
 		# Set the language 
 		TMDB["tmdb"].language = self.lang
+		
 		
 		# Get the genres of the movies and tv shows
 		self.movieGenres = TMDB["genre"].movie_list()
