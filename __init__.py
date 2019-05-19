@@ -41,7 +41,6 @@ class MovieMaster(MycroftSkill):
 		# An API key is required for this to work.  See the README.md for more info
 		self.api = self.settings.get("apiv3")
 		if self.api is not "" or self.api is not None:
-			LOGGER.info(self.api)
 			try:
 				TMDB["tmdb"].api_key = self.api
 			except Exception as e:
@@ -52,6 +51,7 @@ class MovieMaster(MycroftSkill):
 			
 		# Set the language 
 		TMDB["tmdb"].language = self.lang
+		
 		
 		# Get the genres of the movies and tv shows
 		self.movieGenres = TMDB["genre"].movie_list()
@@ -107,7 +107,8 @@ class MovieMaster(MycroftSkill):
 			self.movieDetails = movie
 			if self.movieDetails.overview is not "":
 				self.speak_dialog("movie.description", {"movie": movie})
-				self.speak(self.movieDetails.overview)
+				for sentence in self.movieDetails.overview.split(". "):
+					self.speak(sentence)
 			else:
 				self.speak_dialog("no.info", {"movie": movie})
 		except IndexError:
@@ -120,7 +121,7 @@ class MovieMaster(MycroftSkill):
 		movie = message.data.get("movie")
 		try:
 			self.movieDetails = movie
-			self.speak_dialog("movie.info.response", {"movie": self.movieDetails.title, "year": self.movieDetails.release_date, "budget": self.movieDetails.budget})
+			self.speak_dialog("movie.info.response", {"movie": self.movieDetails.title, "year": nice_date(datetime.strptime(self.movieDetails.release_date.replace("-", " "), "%Y %m %d")), "budget": self.movieDetails.budget})
 			self.speak(self.movieDetails.tagline)
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
