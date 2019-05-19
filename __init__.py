@@ -35,27 +35,22 @@ class MovieMaster(MycroftSkill):
 		self._tvDetails = None
 		self._tvGenres = None
 	
+	
 	def initialize(self):
 		""" This sets some variables that do not change during the execution of the script"""
 		
 		# An API key is required for this to work.  See the README.md for more info
-		self.api = self.settings.get("apiv3")
-		if self.api is not "" or self.api is not None:
-			try:
-				TMDB["tmdb"].api_key = self.api
-			except Exception as e:
-				LOGGER.info(e)
-				self.api = None
+		if self.settings.get("apiv3") == "":
+			self.speak_dialog("no.api", {})
 		else:
-			self.speak("You must get an API key to use this skill")
+			self.api = self.settings.get("apiv3")
 			
-		# Set the language 
-		TMDB["tmdb"].language = self.lang
-		
-		
-		# Get the genres of the movies and tv shows
-		self.movieGenres = TMDB["genre"].movie_list()
-		self.tvGenres = TMDB["genre"].tv_list()
+			# Set the language 
+			TMDB["tmdb"].language = self.lang
+			
+			# Get the genres of the movies and tv shows
+			self.movieGenres = TMDB["genre"].movie_list()
+			self.tvGenres = TMDB["genre"].tv_list()
 	
 	@property
 	def api(self):
@@ -125,6 +120,8 @@ class MovieMaster(MycroftSkill):
 			self.speak(self.movieDetails.tagline)
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
+		except tmdbv3api.exceptions.TMDbException:
+			pass
 	
 	@intent_file_handler("movie.year.intent")
 	def handle_movie_year(self, message):
