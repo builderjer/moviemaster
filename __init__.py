@@ -40,6 +40,7 @@ class MovieMaster(MycroftSkill):
 		""" This sets some variables that do not change during the execution of the script"""
 		
 		# An API key is required for this to work.  See the README.md for more info
+		self.api = self.settings.get("apiv3")
 		if self.settings.get("apiv3") == "":
 			self.speak_dialog("no.api", {})
 		else:
@@ -51,6 +52,15 @@ class MovieMaster(MycroftSkill):
 			# Get the genres of the movies and tv shows
 			self.movieGenres = TMDB["genre"].movie_list()
 			self.tvGenres = TMDB["genre"].tv_list()
+		self.settings.set_changed_callback(self.on_settings_changed)
+
+	
+	def on_settings_changed(self):
+		if self.settings.get("apiv3") is not "":
+			LOGGER.info("got a api")
+			self.api = self.settings.get("apiv3")
+		else:
+			LOGGER.info("no damn api")
 	
 	@property
 	def api(self):
@@ -244,6 +254,7 @@ class MovieMaster(MycroftSkill):
 		
 		The search_depth setting is avaliable at home.mycroft.ai
 		"""
+		pass
 		
 def create_skill():
 	return MovieMaster()
