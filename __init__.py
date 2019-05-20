@@ -41,11 +41,12 @@ class MovieMaster(MycroftSkill):
 		
 		# An API key is required for this to work.  See the README.md for more info
 		self.api = self.settings.get("apiv3")
-		if self.settings.get("apiv3") == "":
+		if self.api == "" or self.api == None:
+		#if self.settings.get("apiv3") == "" or self.settings.get(:
 			self.speak_dialog("no.api", {})
 		else:
-			self.api = self.settings.get("apiv3")
-			
+			# Set the api key
+			TMDB["tmdb"].api_key = self.api
 			# Set the language 
 			TMDB["tmdb"].language = self.lang
 			
@@ -108,6 +109,7 @@ class MovieMaster(MycroftSkill):
 		""" Gets the long version of the requested movie.
 		"""
 		movie = message.data.get("movie")
+		LOGGER.info(self.api)
 		try:
 			self.movieDetails = movie
 			if self.movieDetails.overview is not "":
@@ -131,7 +133,7 @@ class MovieMaster(MycroftSkill):
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
 		except tmdbv3api.exceptions.TMDbException:
-			pass
+			self.speak_dialog("no.api", {})
 	
 	@intent_file_handler("movie.year.intent")
 	def handle_movie_year(self, message):
