@@ -57,11 +57,16 @@ class MovieMaster(MycroftSkill):
 
 	
 	def on_settings_changed(self):
-		if self.settings.get("apiv3") is not "":
-			LOGGER.info("got a api")
-			self.api = self.settings.get("apiv3")
-		else:
-			LOGGER.info("no damn api")
+		try:
+			TMDB["tmdb"].api_key = self.settings.get("apiv3")
+			LOGGER.info("api_key accepted")
+		except tmdbv3api.exceptions.TMDbException:
+			LOGGER.info("not a valid api")
+		#if self.settings.get("apiv3") is not "":
+			#LOGGER.info("got a api")
+			#self.api = self.settings.get("apiv3")
+		#else:
+			#LOGGER.info("no damn api")
 	
 	@property
 	def api(self):
