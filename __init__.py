@@ -40,33 +40,30 @@ class MovieMaster(MycroftSkill):
 		""" This sets some variables that do not change during the execution of the script"""
 		
 		# An API key is required for this to work.  See the README.md for more info
-		self.api = self.settings.get("apiv3")
-		if self.api == "" or self.api == None:
-		#if self.settings.get("apiv3") == "" or self.settings.get(:
-			self.speak_dialog("no.api", {})
-		else:
-			# Set the api key
-			TMDB["tmdb"].api_key = self.api
+		try:
+			TMDB["tmdb"].api_key = self.settings.get("apiv3")
+			LOGGER.info("api_key accepted")
+			self.api = self.settings.get("apiv3")
 			# Set the language 
 			TMDB["tmdb"].language = self.lang
 			
 			# Get the genres of the movies and tv shows
 			self.movieGenres = TMDB["genre"].movie_list()
 			self.tvGenres = TMDB["genre"].tv_list()
+		except tmdbv3api.exceptions.TMDbException:
+			self.speak_dialog("no.api", {})
+		
+		# Keep checking the settings for a valid API key
 		self.settings.set_changed_callback(self.on_settings_changed)
-
 	
 	def on_settings_changed(self):
 		try:
 			TMDB["tmdb"].api_key = self.settings.get("apiv3")
 			LOGGER.info("api_key accepted")
+			self.api = self.settings.get("apiv3")
 		except tmdbv3api.exceptions.TMDbException:
 			LOGGER.info("not a valid api")
-		#if self.settings.get("apiv3") is not "":
-			#LOGGER.info("got a api")
-			#self.api = self.settings.get("apiv3")
-		#else:
-			#LOGGER.info("no damn api")
+			self.speak_dialog("no.api")
 	
 	@property
 	def api(self):
