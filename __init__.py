@@ -31,6 +31,7 @@ class MovieMaster(MycroftSkill):
 		self._movieDetails = None
 		self._movieGenres = None
 		self._popularMovies = None
+		self._topMovies = None
 		self._tvID = None
 		self._tvDetails = None
 		self._tvGenres = None
@@ -89,6 +90,14 @@ class MovieMaster(MycroftSkill):
 	@popularMovies.setter
 	def popularMovies(self, search_depth):
 		self._popularMovies = TMDB["movie"].popular()[:search_depth]
+	
+	@property
+	def topMovies(self):
+		return self._topMovies
+	
+	@topMovies.setter
+	def topMovies(self, search_depth):
+		self._topMovies = TMDB["movie"].top_rated()[:search_depth]
 		
 	@property
 	def tvGenres(self):
@@ -111,7 +120,6 @@ class MovieMaster(MycroftSkill):
 		""" Gets the long version of the requested movie.
 		"""
 		movie = message.data.get("movie")
-		LOGGER.info(self.api)
 		try:
 			self.movieDetails = movie
 			if self.movieDetails.overview is not "":
@@ -122,6 +130,8 @@ class MovieMaster(MycroftSkill):
 				self.speak_dialog("no.info", {"movie": movie})
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
+		except tmdbv3api.exceptions.TMDbException:
+			self.speak_dialog("no.api", {})
 
 	@intent_file_handler("movie.information.intent")
 	def handle_movie_information(self, message):
@@ -147,6 +157,8 @@ class MovieMaster(MycroftSkill):
 			self.speak_dialog("movie.year", {"movie": self.movieDetails.title, "year": self.movieDetails.release_date})
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
+		except tmdbv3api.exceptions.TMDbException:
+			self.speak_dialog("no.api", {})
 	
 	@intent_file_handler("movie.cast.intent")
 	def handle_movie_cast(self, message):
@@ -171,7 +183,9 @@ class MovieMaster(MycroftSkill):
 			self.speak_dialog("movie.cast", {"movie": movie, "actorlist": actorList, "lastactor": lastActor})
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-	
+		except tmdbv3api.exceptions.TMDbException:
+			self.speak_dialog("no.api", {})
+
 	@intent_file_handler("movie.production.intent")
 	def handle_movie_production(self, message):
 		""" Gets the production companies that made the movie.
@@ -194,7 +208,9 @@ class MovieMaster(MycroftSkill):
 				self.speak_dialog("movie.production.multiple", {"companies": companies, "movie": movie, "lastcompany": lastCompany})
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-	
+		except tmdbv3api.exceptions.TMDbException:
+			self.speak_dialog("no.api", {})
+
 	@intent_file_handler("movie.genres.intent")
 	def handle_movie_genre(self, message):
 		""" Gets the genres of the movie.
@@ -216,7 +232,9 @@ class MovieMaster(MycroftSkill):
 				self.speak_dialog("movie.genre.multiple", {"genrelist": genreDialog, "genrelistlast": lastGenre})
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-	
+		except tmdbv3api.exceptions.TMDbException:
+			self.speak_dialog("no.api", {})
+
 	@intent_file_handler("movie.runtime.intent")
 	def handle_movie_length(self, message):
 		""" Gets the runtime of the searched movie.
@@ -227,7 +245,9 @@ class MovieMaster(MycroftSkill):
 			self.speak_dialog("movie.runtime", {"movie": movie, "runtime": self.movieDetails.runtime})
 		except IndexError:
 			self.speak_dialog("no.info.general", {})
-	
+		except tmdbv3api.exceptions.TMDbException:
+			self.speak_dialog("no.api", {})
+
 	@intent_file_handler("movie.popular.intent")
 	def handle_popular_movies(self, message):
 		""" Gets the daily popular movies.
@@ -250,7 +270,9 @@ class MovieMaster(MycroftSkill):
 			self.speak_dialog("movie.popular", {"popularlist": popularDialog})
 		except IndexError:
 			self.speak_dialog("no.info.general", {})
-	
+		except tmdbv3api.exceptions.TMDbException:
+			self.speak_dialog("no.api", {})
+
 	@intent_file_handler("movie.top.intent")
 	def handle_top_movies(self, message):
 		""" Gets the top rated movies of the day.
@@ -258,7 +280,20 @@ class MovieMaster(MycroftSkill):
 		
 		The search_depth setting is avaliable at home.mycroft.ai
 		"""
-		pass
+		self.topMovies = self.settings.get("search_depth")
+		# Set up the dialog
+		lastMovie = self.topMovies.pop().title
+		topDialog = ""
+		for movie in topMovies:
+			if topDialog == "":
+				topDialog = movie.title
+			else:
+				topDialog = topDialog + " and {}".format(lastMovie)
+				self.speak_dialog("movie.top", {"toplist": topDialog})
+		except IndexError:
+			self.speak_dialog("no.info.general", {})
+		except tmdbv3api.exceptions.TMDbException:
+			self.speak_dialog("no.api", {})
 		
 def create_skill():
 	return MovieMaster()
