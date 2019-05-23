@@ -280,16 +280,17 @@ class MovieMaster(MycroftSkill):
 		
 		The search_depth setting is avaliable at home.mycroft.ai
 		"""
-		self.topMovies = self.settings.get("search_depth")
-		# Set up the dialog
-		lastMovie = self.topMovies.pop().title
-		topDialog = ""
-		for movie in topMovies:
-			if topDialog == "":
-				topDialog = movie.title
-			else:
-				topDialog = topDialog + " and {}".format(lastMovie)
-				self.speak_dialog("movie.top", {"toplist": topDialog})
+		try:
+			self.topMovies = self.settings.get("search_depth")
+			# Set up the dialog
+			lastMovie = self.topMovies.pop().title
+			topDialog = ""
+			for movie in topMovies:
+				if topDialog == "":
+					topDialog = movie.title
+				else:
+					topDialog = topDialog + " and {}".format(lastMovie)
+					self.speak_dialog("movie.top", {"toplist": topDialog})
 		except IndexError:
 			self.speak_dialog("no.info.general", {})
 		except tmdbv3api.exceptions.TMDbException:
