@@ -51,6 +51,8 @@ class MovieMaster(MycroftSkill):
 			# Get the genres of the movies and tv shows
 			self.movieGenres = TMDB["genre"].movie_list()
 			self.tvGenres = TMDB["genre"].tv_list()
+		except KeyError:
+			self.speak_dialog("no.api", {})
 		except tmdbv3api.exceptions.TMDbException:
 			self.speak_dialog("no.api", {})
 		
