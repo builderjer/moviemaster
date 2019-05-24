@@ -51,7 +51,7 @@ class MovieMaster(MycroftSkill):
 			
 		# I can not find another exception to catch a valid API key so I use this
 		except KeyError:
-			if self.api = "" or self.api = None:
+			if self.api == "" or self.api == None:
 				self.speak_dialog("no.api", {})
 			else:
 				self.speak_dialog("no.valid.api", {})
