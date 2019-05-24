@@ -13,9 +13,12 @@ LOGGER = LOG(__name__)
 TMDB = {
 		"tmdb": tmdbv3api.TMDb(),
 		"collection": tmdbv3api.Collection(),
-		"company": tmdbv3api.Company(),
-		"configuration": tmdbv3api.Configuration(),
-		"discover": tmdbv3api.Discover(),
+		#"company": tmdbv3api.Company(),
+		#"configuration": tmdbv3api.Configuration(),
+		
+		# I will work on this one later
+		#"discover": tmdbv3api.Discover(),
+		
 		"genre": tmdbv3api.Genre(),
 		"movie": tmdbv3api.Movie(),
 		"person": tmdbv3api.Person(),
@@ -31,42 +34,40 @@ class MovieMaster(MycroftSkill):
 		self._movieDetails = None
 		self._movieGenres = None
 		self._popularMovies = None
-		self._topMovies = None
-		self._tvID = None
-		self._tvDetails = None
-		self._tvGenres = None
-	
+		self._topMovies = None	
 	
 	def initialize(self):
 		""" This sets some variables that do not change during the execution of the script"""
 		
 		# An API key is required for this to work.  See the README.md for more info
 		try:
-			TMDB["tmdb"].api_key = self.settings.get("apiv3")
-			LOGGER.info("api_key accepted")
 			self.api = self.settings.get("apiv3")
+			TMDB["tmdb"].api_key = self.api
 			# Set the language 
 			TMDB["tmdb"].language = self.lang
 			
 			# Get the genres of the movies and tv shows
 			self.movieGenres = TMDB["genre"].movie_list()
-			self.tvGenres = TMDB["genre"].tv_list()
+			
+		# I can not find another exception to catch a valid API key so I use this
 		except KeyError:
-			self.speak_dialog("no.api", {})
-		except tmdbv3api.exceptions.TMDbException:
-			self.speak_dialog("no.api", {})
+			if self.api = "" or self.api = None:
+				self.speak_dialog("no.api", {})
+			else:
+				self.speak_dialog("no.valid.api", {})
 		
 		# Keep checking the settings for a valid API key
 		self.settings.set_changed_callback(self.on_settings_changed)
 	
 	def on_settings_changed(self):
-		try:
-			TMDB["tmdb"].api_key = self.settings.get("apiv3")
-			LOGGER.info("api_key accepted")
-			self.api = self.settings.get("apiv3")
-		except tmdbv3api.exceptions.TMDbException:
-			LOGGER.info("not a valid api")
-			self.speak_dialog("no.api")
+		self.initialize()
+		#try:
+			#TMDB["tmdb"].api_key = self.settings.get("apiv3")
+			#LOGGER.info("api_key accepted")
+			#self.api = self.settings.get("apiv3")
+		#except tmdbv3api.exceptions.TMDbException:
+			#LOGGER.info("not a valid api")
+			#self.speak_dialog("no.api")
 	
 	@property
 	def api(self):
@@ -86,7 +87,6 @@ class MovieMaster(MycroftSkill):
 	
 	@property
 	def popularMovies(self):
-		#self._popularMovies = TMDB["movie"].popular()[:search_depth]
 		return self._popularMovies
 	
 	@popularMovies.setter
@@ -100,14 +100,6 @@ class MovieMaster(MycroftSkill):
 	@topMovies.setter
 	def topMovies(self, search_depth):
 		self._topMovies = TMDB["movie"].top_rated()[:search_depth]
-		
-	@property
-	def tvGenres(self):
-		return self._tvGenres
-	
-	@tvGenres.setter
-	def tvGenres(self, tv_list):
-		self._tvGenres = tv_list
 	
 	@property
 	def movieDetails(self):
@@ -130,10 +122,14 @@ class MovieMaster(MycroftSkill):
 					self.speak(sentence)
 			else:
 				self.speak_dialog("no.info", {"movie": movie})
+				
+		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		except tmdbv3api.exceptions.TMDbException:
-			self.speak_dialog("no.api", {})
+		
+		# If there is an API key, but it is invalid, it just calls an Exception
+		except Exception:
+			self.speak_dialog("no.valid.api", {})
 
 	@intent_file_handler("movie.information.intent")
 	def handle_movie_information(self, message):
@@ -144,10 +140,14 @@ class MovieMaster(MycroftSkill):
 			self.movieDetails = movie
 			self.speak_dialog("movie.info.response", {"movie": self.movieDetails.title, "year": nice_date(datetime.strptime(self.movieDetails.release_date.replace("-", " "), "%Y %m %d")), "budget": self.movieDetails.budget})
 			self.speak(self.movieDetails.tagline)
+				
+		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		except tmdbv3api.exceptions.TMDbException:
-			self.speak_dialog("no.api", {})
+		
+		# If there is an API key, but it is invalid, it just calls an Exception
+		except Exception:
+			self.speak_dialog("no.valid.api", {})
 	
 	@intent_file_handler("movie.year.intent")
 	def handle_movie_year(self, message):
@@ -157,10 +157,14 @@ class MovieMaster(MycroftSkill):
 		try:
 			self.movieDetails = movie
 			self.speak_dialog("movie.year", {"movie": self.movieDetails.title, "year": self.movieDetails.release_date})
+				
+		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		except tmdbv3api.exceptions.TMDbException:
-			self.speak_dialog("no.api", {})
+		
+		# If there is an API key, but it is invalid, it just calls an Exception
+		except Exception:
+			self.speak_dialog("no.valid.api", {})
 	
 	@intent_file_handler("movie.cast.intent")
 	def handle_movie_cast(self, message):
@@ -183,10 +187,14 @@ class MovieMaster(MycroftSkill):
 				# Add the formated sentence to the actor list
 				actorList = actorList + actor
 			self.speak_dialog("movie.cast", {"movie": movie, "actorlist": actorList, "lastactor": lastActor})
+				
+		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		except tmdbv3api.exceptions.TMDbException:
-			self.speak_dialog("no.api", {})
+		
+		# If there is an API key, but it is invalid, it just calls an Exception
+		except Exception:
+			self.speak_dialog("no.valid.api", {})
 
 	@intent_file_handler("movie.production.intent")
 	def handle_movie_production(self, message):
@@ -208,10 +216,14 @@ class MovieMaster(MycroftSkill):
 				for company in companyList:
 					companies = companies + company["name"] + ", "
 				self.speak_dialog("movie.production.multiple", {"companies": companies, "movie": movie, "lastcompany": lastCompany})
+				
+		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		except tmdbv3api.exceptions.TMDbException:
-			self.speak_dialog("no.api", {})
+		
+		# If there is an API key, but it is invalid, it just calls an Exception
+		except Exception:
+			self.speak_dialog("no.valid.api", {})
 
 	@intent_file_handler("movie.genres.intent")
 	def handle_movie_genre(self, message):
@@ -232,10 +244,14 @@ class MovieMaster(MycroftSkill):
 				for genre in genreList:
 					genreDialog = genreDialog + genre["name"] + ", "
 				self.speak_dialog("movie.genre.multiple", {"genrelist": genreDialog, "genrelistlast": lastGenre})
+				
+		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		except tmdbv3api.exceptions.TMDbException:
-			self.speak_dialog("no.api", {})
+		
+		# If there is an API key, but it is invalid, it just calls an Exception
+		except Exception:
+			self.speak_dialog("no.valid.api", {})
 
 	@intent_file_handler("movie.runtime.intent")
 	def handle_movie_length(self, message):
@@ -245,10 +261,14 @@ class MovieMaster(MycroftSkill):
 		try:
 			self.movieDetails = movie
 			self.speak_dialog("movie.runtime", {"movie": movie, "runtime": self.movieDetails.runtime})
+				
+		# If the title can not be found, it creates an IndexError
 		except IndexError:
-			self.speak_dialog("no.info.general", {})
-		except tmdbv3api.exceptions.TMDbException:
-			self.speak_dialog("no.api", {})
+			self.speak_dialog("no.info", {"movie": movie})
+		
+		# If there is an API key, but it is invalid, it just calls an Exception
+		except Exception:
+			self.speak_dialog("no.valid.api", {})
 
 	@intent_file_handler("movie.popular.intent")
 	def handle_popular_movies(self, message):
@@ -270,10 +290,10 @@ class MovieMaster(MycroftSkill):
 					popularDialog = popularDialog + ", " + movie.title
 			popularDialog = popularDialog + " and {}".format(lastMovie)
 			self.speak_dialog("movie.popular", {"popularlist": popularDialog})
-		except IndexError:
-			self.speak_dialog("no.info.general", {})
-		except tmdbv3api.exceptions.TMDbException:
-			self.speak_dialog("no.api", {})
+			
+		# If there is an API key, but it is invalid, it just calls an Exception
+		except Exception:
+			self.speak_dialog("no.valid.api", {})
 
 	@intent_file_handler("movie.top.intent")
 	def handle_top_movies(self, message):
@@ -293,10 +313,10 @@ class MovieMaster(MycroftSkill):
 				else:
 					topDialog = topDialog + " and {}".format(lastMovie)
 					self.speak_dialog("movie.top", {"toplist": topDialog})
-		except IndexError:
-			self.speak_dialog("no.info.general", {})
-		except tmdbv3api.exceptions.TMDbException:
-			self.speak_dialog("no.api", {})
+					
+		# If there is an API key, but it is invalid, it just calls an Exception
+		except Exception:
+			self.speak_dialog("no.valid.api", {})
 		
 def create_skill():
 	return MovieMaster()
