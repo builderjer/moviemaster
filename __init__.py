@@ -60,14 +60,13 @@ class MovieMaster(MycroftSkill):
 		self.settings.set_changed_callback(self.on_settings_changed)
 	
 	def on_settings_changed(self):
-		self.initialize()
-		#try:
-			#TMDB["tmdb"].api_key = self.settings.get("apiv3")
-			#LOGGER.info("api_key accepted")
-			#self.api = self.settings.get("apiv3")
-		#except tmdbv3api.exceptions.TMDbException:
-			#LOGGER.info("not a valid api")
-			#self.speak_dialog("no.api")
+		try:
+			TMDB["tmdb"].api_key = self.settings.get("apiv3")
+			LOGGER.info("api_key accepted")
+			self.api = self.settings.get("apiv3")
+		except tmdbv3api.exceptions.TMDbException:
+			LOGGER.info("not a valid api")
+			self.speak_dialog("no.api")
 	
 	@property
 	def api(self):
