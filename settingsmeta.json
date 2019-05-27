@@ -1,5 +1,5 @@
 {
-    "name": "TMDB",
+    "name": "Movie Master",
     "skillMetadata": {
         "sections": [
 	    {
@@ -9,7 +9,7 @@
 			"name": "apiv3",
 			"type": "text",
 			"label": "V3 key",
-			"value": "api key"
+			"value": ""
 		    }
 		]
 	    },
@@ -17,10 +17,10 @@
 		"name": "Search Depth",
 		"fields": [
 		    {
-			"name": "search_depth",
+			"name": "searchDepth",
 			"type": "number",
 			"label": "Number of movies or TV shows to list when searching.",
-			"value": 5
+			"value": "5"
 		    }
 		]
 	    }
