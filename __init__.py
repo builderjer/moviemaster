@@ -10,69 +10,63 @@ __version__ = "0.2.0"
 
 LOGGER = LOG(__name__)
 
-TMDB = {
-		"tmdb": tmdbv3api.TMDb(),
-		"collection": tmdbv3api.Collection(),
-		#"company": tmdbv3api.Company(),
-		#"configuration": tmdbv3api.Configuration(),
-		
-		# I will work on this one later
-		#"discover": tmdbv3api.Discover(),
-		
-		"genre": tmdbv3api.Genre(),
-		"movie": tmdbv3api.Movie(),
-		"person": tmdbv3api.Person(),
-		"season": tmdbv3api.Season(),
-		"tv": tmdbv3api.TV()
-		}
+TMDB = tmdbv3api.TMDb()
+MOVIE = tmdbv3api.Movie()
 
 class MovieMaster(MycroftSkill):
 	def __init__(self):
 		"""A Mycroft skill to access the free TMDb api from https://www.themoviedb.org/"""
 		super(MovieMaster, self).__init__(name="MovieMaster")
 		self._api = None
-		self._movieDetails = None
-		self._movieGenres = None
-		self._popularMovies = None
-		self._topMovies = None	
+		self._searchDepth = None
 	
 	def initialize(self):
 		""" This sets some variables that do not change during the execution of the script"""
 		
 		# An API key is required for this to work.  See the README.md for more info
-		try:
-			self.api = self.settings.get("apiv3")
-			LOGGER.info(self.api)
-			TMDB["tmdb"].api_key = self.api
-			# Set the language 
-			TMDB["tmdb"].language = self.lang
-			
-			# Get the genres of the movies and tv shows
-			self.movieGenres = TMDB["genre"].movie_list()
-			
-		except tmdbv3api.exceptions.TMDbException:
-			self.speak_dialog("no.valid.api")
-			
-		# I can not find another exception to catch a valid API key so I use this
-		except KeyError:
-			if self.api == "" or self.api == None:
-				self.speak_dialog("no.api", {})
-			else:
-				self.speak_dialog("no.valid.api", {})
 		
-		# Keep checking the settings for a valid API key
-		self.settings.set_changed_callback(self.on_settings_changed)
-	
-	def on_settings_changed(self):
-		LOGGER.info(self.settings.get('apiv3'))
+		# Try and get the settings from https://account.mycroft.ai/skills
 		try:
-			TMDB["tmdb"].api_key = self.settings.get("apiv3")
-			LOGGER.info("api_key accepted")
+			# Get the API 
 			self.api = self.settings.get("apiv3")
-		except tmdbv3api.exceptions.TMDbException:
-			LOGGER.info("not a valid api")
-			self.speak_dialog("no.api")
-	
+			# Get search depth
+			self.searchDepth = self.settings.get("searchDepth")
+			if self.api:
+				try:
+					# Set the API Key
+					TMDB.api_key = self.api
+					# Set the language from the default in settings
+					TMDB.language = self.lang
+				except tmdbv3api.exceptions.TMDbException:
+					self.speak_dialog("no.valid.api", {})
+			else:
+				self.speak_dialog("no.api", {})
+				
+		# If the api_key is no good, it throws a KeyError
+		except KeyError:
+			self.speak_dialog("no.valid.api", {})
+			
+		self.settings.set_changed_callback(self.on_web_settings_change)
+		
+	def on_web_settings_change(self):
+		try:
+			self.api = self.settings.get("apiv3")
+			self.searchDepth = self.settings.get("searchDepth")
+			if self.api:
+				try:
+					# Set the API Key
+					TMDB.api_key = self.api
+					# Get the movie genres
+					#self.movieGenres = GENRE.movie_list()
+				except tmdbv3api.exceptions.TMDbException:
+					self.speak_dialog("no.valid.api", {})
+			else:
+				self.speak_dialog("no.api", {})
+				
+		# If the api_key is no good, it throws a KeyError
+		except KeyError:
+			self.speak_dialog("no.valid.api", {})
+			
 	@property
 	def api(self):
 		return self._api
@@ -82,47 +76,23 @@ class MovieMaster(MycroftSkill):
 		self._api = apiNum
 	
 	@property
-	def movieGenres(self):
-		return self._movieGenres
+	def searchDepth(self):
+		return self._searchDepth
 	
-	@movieGenres.setter
-	def movieGenres(self, movie_list):
-		self._movieGenres = movie_list
-	
-	@property
-	def popularMovies(self):
-		return self._popularMovies
-	
-	@popularMovies.setter
-	def popularMovies(self, search_depth):
-		self._popularMovies = TMDB["movie"].popular()[:search_depth]
-	
-	@property
-	def topMovies(self):
-		return self._topMovies
-	
-	@topMovies.setter
-	def topMovies(self, search_depth):
-		self._topMovies = TMDB["movie"].top_rated()[:search_depth]
-	
-	@property
-	def movieDetails(self):
-		return self._movieDetails
-	
-	@movieDetails.setter
-	def movieDetails(self, movie):
-		self._movieDetails = TMDB["movie"].details(TMDB["movie"].search(movie)[:1][0].id)
-	
+	@searchDepth.setter
+	def searchDepth(self, depth):
+		self._searchDepth = depth
+		
 	@intent_file_handler("movie.description.intent")
 	def handle_movie_description(self, message):
 		""" Gets the long version of the requested movie.
 		"""
 		movie = message.data.get("movie")
 		try:
-			self.movieDetails = movie
-			if self.movieDetails.overview is not "":
+			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
+			if movieDetails.overview is not "":
 				self.speak_dialog("movie.description", {"movie": movie})
-				for sentence in self.movieDetails.overview.split(". "):
+				for sentence in movieDetails.overview.split(". "):
 					self.speak(sentence)
 			else:
 				self.speak_dialog("no.info", {"movie": movie})
@@ -132,7 +102,7 @@ class MovieMaster(MycroftSkill):
 			self.speak_dialog("no.info", {"movie": movie})
 		
 		# If there is an API key, but it is invalid, it just calls an Exception
-		except Exception:
+		except Exception as e:
 			self.speak_dialog("no.valid.api", {})
 
 	@intent_file_handler("movie.information.intent")
@@ -141,9 +111,9 @@ class MovieMaster(MycroftSkill):
 		"""
 		movie = message.data.get("movie")
 		try:
-			self.movieDetails = movie
-			self.speak_dialog("movie.info.response", {"movie": self.movieDetails.title, "year": nice_date(datetime.strptime(self.movieDetails.release_date.replace("-", " "), "%Y %m %d")), "budget": self.movieDetails.budget})
-			self.speak(self.movieDetails.tagline)
+			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
+			self.speak_dialog("movie.info.response", {"movie": movieDetails.title, "year": nice_date(datetime.strptime(movieDetails.release_date.replace("-", " "), "%Y %m %d")), "budget": nice_number(movieDetails.budget)})
+			self.speak(movieDetails.tagline)
 				
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
@@ -159,10 +129,10 @@ class MovieMaster(MycroftSkill):
 		"""
 		movie = message.data.get("movie")
 		try:
-			self.movieDetails = movie
-			self.speak_dialog("movie.year", {"movie": self.movieDetails.title, "year": self.movieDetails.release_date})
+			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
+			self.speak_dialog("movie.year", {"movie": movieDetails.title, "year": nice_date(datetime.strptime(movieDetails.release_date.replace("-", " "), "%Y %m %d"))})
 				
-		# If the title can not be found, it creates an IndexError
+		## If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
 		
@@ -178,8 +148,9 @@ class MovieMaster(MycroftSkill):
 		"""
 		movie = message.data.get("movie")
 		try:
-			self.movieDetails = movie
-			cast = self.movieDetails.casts["cast"][:self.settings.get("search_depth")]
+			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
+			cast = movieDetails.casts["cast"][:self.searchDepth]
+			
 			# Create a list to store the cast to be included in the dialog
 			actorList = ""
 			# Get the last actor in the list so that the dialog can say it properly
@@ -208,8 +179,9 @@ class MovieMaster(MycroftSkill):
 		"""
 		movie = message.data.get("movie")
 		try:
-			self.movieDetails = movie
-			companyList = self.movieDetails.production_companies[:self.settings.get("search_depth")]
+			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
+			companyList = movieDetails.production_companies[:self.searchDepth]
+			
 			# If there is only one production company, say the dialog differently
 			if len(companyList) == 1:
 				self.speak_dialog("movie.production.single", {"movie": movie, "company": companyList[0]["name"]})
@@ -231,14 +203,14 @@ class MovieMaster(MycroftSkill):
 
 	@intent_file_handler("movie.genres.intent")
 	def handle_movie_genre(self, message):
-		""" Gets the genres of the movie.
+		""" Gets the genres the movie belongs to.
 		
 		The search_depth setting is avaliable at home.mycroft.ai
 		"""
 		movie = message.data.get("movie")
 		try:
-			self.movieDetails = movie
-			genreList = self.movieDetails.genres[:self.settings.get("search_depth")]
+			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
+			genreList = movieDetails.genres[:self.searchDepth]
 			# Set up dialog AGAIN just like above.  Is there a better way?
 			if len(genreList) == 1:
 				self.speak_dialog("movie.genre.single", {"movie": movie, "genre": genreList[0]["name"]})
@@ -263,8 +235,8 @@ class MovieMaster(MycroftSkill):
 		"""
 		movie = message.data.get("movie")
 		try:
-			self.movieDetails = movie
-			self.speak_dialog("movie.runtime", {"movie": movie, "runtime": self.movieDetails.runtime})
+			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
+			self.speak_dialog("movie.runtime", {"movie": movie, "runtime": movieDetails.runtime})
 				
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
@@ -273,7 +245,34 @@ class MovieMaster(MycroftSkill):
 		# If there is an API key, but it is invalid, it just calls an Exception
 		except Exception:
 			self.speak_dialog("no.valid.api", {})
-
+	
+	@intent_file_handler("movie.recommendations.intent")
+	def handle_movie_recommendations(self, message):
+		""" Gets the top movies that are similar to the suggested movie.
+		"""
+		try:
+			movie = message.data.get("movie")
+			# Create a list to store the dialog
+			movieDialog = ""
+			movieRecommendations = MOVIE.recommendations(MOVIE.search(movie)[:1][0].id)[:self.searchDepth]
+			# Get the last movie
+			lastMovie = movieRecommendations.pop()
+			for film in movieRecommendations:
+				if movieDialog == "":
+					movieDialog = film.title
+				else:
+					movieDialog = movieDialog + ", " + film.title
+			movieDialog = movieDialog + " and {}".format(lastMovie.title)
+			self.speak_dialog("movie.recommendations", {"movielist": movieDialog, "movie": movie})
+			
+		# If the title can not be found, it creates an IndexError
+		except IndexError:
+			self.speak_dialog("no.info", {"movie": movie.title})
+		
+		# If there is an API key, but it is invalid, it just calls an Exception
+		except Exception:
+			self.speak_dialog("no.valid.api", {})
+			
 	@intent_file_handler("movie.popular.intent")
 	def handle_popular_movies(self, message):
 		""" Gets the daily popular movies.
@@ -283,16 +282,16 @@ class MovieMaster(MycroftSkill):
 		The search_depth setting is avaliable at home.mycroft.ai
 		"""
 		try:
-			self.popularMovies = self.settings.get("search_depth")
+			popularMovies = MOVIE.popular()[:self.searchDepth]
 			# Lets see...I think we will set up the dialog again.
-			lastMovie = self.popularMovies.pop().title
+			lastMovie = popularMovies.pop()
 			popularDialog = ""
-			for movie in self.popularMovies:
+			for movie in popularMovies:
 				if popularDialog == "":
 					popularDialog = movie.title
 				else:
 					popularDialog = popularDialog + ", " + movie.title
-			popularDialog = popularDialog + " and {}".format(lastMovie)
+			popularDialog = popularDialog + " and {}".format(lastMovie.title)
 			self.speak_dialog("movie.popular", {"popularlist": popularDialog})
 			
 		# If there is an API key, but it is invalid, it just calls an Exception
@@ -307,16 +306,17 @@ class MovieMaster(MycroftSkill):
 		The search_depth setting is avaliable at home.mycroft.ai
 		"""
 		try:
-			self.topMovies = self.settings.get("search_depth")
+			topMovies = MOVIE.top_rated()[:self.searchDepth]
 			# Set up the dialog
-			lastMovie = self.topMovies.pop().title
+			lastMovie = topMovies.pop()
 			topDialog = ""
 			for movie in topMovies:
 				if topDialog == "":
 					topDialog = movie.title
 				else:
-					topDialog = topDialog + " and {}".format(lastMovie)
-					self.speak_dialog("movie.top", {"toplist": topDialog})
+					topDialog = topDialog + ", {}".format(movie.title)
+			topDialog = topDialog + " and {}".format(lastMovie.title)
+			self.speak_dialog("movie.top", {"toplist": topDialog})
 					
 		# If there is an API key, but it is invalid, it just calls an Exception
 		except Exception:
