@@ -1,7 +1,7 @@
 # <img src='PrimaryLogo_Green.png' width='50' style='vertical-align:bottom'/> MOVIE MASTER
 Find information about movies, actors and production details.
 
-# **Development Version - Not always working**
+# **Version 0.2.0 - Please test carefully**
 
 ## About
 
