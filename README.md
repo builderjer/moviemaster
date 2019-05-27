@@ -15,6 +15,11 @@ Easily find information, such as a description, or cast from a movie or tv show 
  - "Look for information on the movie _______."
  - "What company made the movie _______?"
  - "When was the movie _______ made?"
+ - "Do you have info on the film _______?"
+ - "What are popular movies playing now?"
+ - "What films do you recommend like _______?"
+ - "How long is the movie _______?"
+ - "What are the highest rated movies out?
 
 ## Installation
 Installation should be pretty much effortless.
@@ -65,8 +70,7 @@ git clone https://github.com/builderjer/moviemaster.git
 ## Tags
 #TMDB
 #Movies
-#TVshows
-#actors
+#Actors
 #Mark I
 
 ## ToDo
