@@ -1,3 +1,3 @@
-(find|get|look for|is there) (information|info) (on|about) the (movie|film) {movie}
-(give|tell|get) (|me|us) (information|info) (on|about) the (movie|film) {movie}
+(find|get|look for|is there) (information|info) (on|about) the (movie|film|flick) {movie}
+(give|tell|get) (|me|us) (information|info) (on|about) the (movie|film|flick) {movie}
 (do you have|can you get) (info|information) on the (movie|film|flick) {movie}

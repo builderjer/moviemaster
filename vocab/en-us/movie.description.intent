@@ -1,4 +1,4 @@
 what is the (movie|film|flick) {movie} about
 tell (me|us) about the (movie|film|flick) {movie}
-give (me|us) a (description|synopsis) of the (movie|film) {movie}
+(give|get) (me|us) a (description|synopsis) of the (movie|film|flick) {movie}
  
