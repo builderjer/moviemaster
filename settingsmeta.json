@@ -1,5 +1,5 @@
 {
-    "name": "MovieMaster",
+    "name": "Movie Master",
     "skillMetadata": {
         "sections": [
 	    {
@@ -17,10 +17,10 @@
 		"name": "Search Depth",
 		"fields": [
 		    {
-			"name": "search_depth",
+			"name": "searchDepth",
 			"type": "number",
 			"label": "Number of movies or TV shows to list when searching.",
-			"value": 5
+			"value": "5"
 		    }
 		]
 	    }
