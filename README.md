@@ -62,7 +62,7 @@ git clone https://github.com/builderjer/moviemaster.git
 * Fill out API key on https://home.mycroft.ai
 * Ask a question about a movie
   * "Hey Mycroft, tell me about the movie Monty Python and the Holy Grail"
-  * Listen to the awesome responce!!
+  * Listen to the awesome response!!
 
 ## Category
 **Entertainment**
