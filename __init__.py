@@ -25,47 +25,48 @@ class MovieMaster(MycroftSkill):
 		
 		# An API key is required for this to work.  See the README.md for more info
 		
+		
 		# Try and get the settings from https://account.mycroft.ai/skills
-		try:
-			# Get the API 
-			self.api = self.settings.get("apiv3")
-			# Get search depth
-			self.searchDepth = self.settings.get("searchDepth")
-			if self.api:
-				try:
-					# Set the API Key
-					TMDB.api_key = self.api
-					# Set the language from the default in settings
-					TMDB.language = self.lang
-				except tmdbv3api.exceptions.TMDbException:
-					self.speak_dialog("no.valid.api", {})
-			else:
-				self.speak_dialog("no.api", {})
+		#try:
+			## Get the API 
+			#self.api = self.settings.get("apiv3")
+		# Get search depth
+		self.searchDepth = self.settings.get("searchDepth")
+			#if self.api:
+				#try:
+					## Set the API Key
+					#TMDB.api_key = self.api
+		# Set the language from the default in settings
+		TMDB.language = self.lang
+				#except tmdbv3api.exceptions.TMDbException:
+					#self.speak_dialog("no.valid.api", {})
+			#else:
+				#self.speak_dialog("no.api", {})
 				
-		# If the api_key is no good, it throws a KeyError
-		except KeyError:
-			self.speak_dialog("no.valid.api", {})
+		## If the api_key is no good, it throws a KeyError
+		#except KeyError:
+			#self.speak_dialog("no.valid.api", {})
 			
 		self.settings.set_changed_callback(self.on_web_settings_change)
 		
 	def on_web_settings_change(self):
-		try:
-			self.api = self.settings.get("apiv3")
-			self.searchDepth = self.settings.get("searchDepth")
-			if self.api:
-				try:
-					# Set the API Key
-					TMDB.api_key = self.api
-					# Get the movie genres
-					#self.movieGenres = GENRE.movie_list()
-				except tmdbv3api.exceptions.TMDbException:
-					self.speak_dialog("no.valid.api", {})
-			else:
-				self.speak_dialog("no.api", {})
+		#try:
+			#self.api = self.settings.get("apiv3")
+		self.searchDepth = self.settings.get("searchDepth")
+			#if self.api:
+				#try:
+					## Set the API Key
+					#TMDB.api_key = self.api
+					## Get the movie genres
+					##self.movieGenres = GENRE.movie_list()
+				#except tmdbv3api.exceptions.TMDbException:
+					#self.speak_dialog("no.valid.api", {})
+			#else:
+				#self.speak_dialog("no.api", {})
 				
-		# If the api_key is no good, it throws a KeyError
-		except KeyError:
-			self.speak_dialog("no.valid.api", {})
+		## If the api_key is no good, it throws a KeyError
+		#except KeyError:
+			#self.speak_dialog("no.valid.api", {})
 			
 	@property
 	def api(self):
