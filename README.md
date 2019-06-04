@@ -24,14 +24,6 @@ Easily find information, such as a description, or cast from a movie with your v
 ## Installation
 Installation should be pretty much effortless.
 
-A free API key is **REQUIRED** for this skill to work
-
-* Signup [here](https://www.themoviedb.org/account/signup) for a FREE account
-
-* Get API key [here](https://www.themoviedb.org/settings/api)
-  * You will get a v.3 key and a v.4 key
-  * We will use the v.3 for this version **REMEMBER THIS, YOU WILL NEED IT**
-
 ### Use mycroft-msm to install automatically
 Enter the following command into your terminal
 
@@ -40,14 +32,13 @@ mycroft-msm install https://github.com/builderjer/moviemaster.git
 ```
 
 msm should install the dependcencies automatically
-If not, you can manually install from pip with the command
+
+### Manual Installation
+Install the dependcencies
 
 ```
 pip install tmdbv3api
 ```
-
-### Manual Installation
-Install the dependcencies with the above command
 
 Change into your skills directory and clone from repository
 on linux or picroft (not tested on Windows)
@@ -59,10 +50,18 @@ git clone https://github.com/builderjer/moviemaster.git
 
 ### After Installation
 
-* Fill out API key on https://home.mycroft.ai
 * Ask a question about a movie
   * "Hey Mycroft, tell me about the movie Monty Python and the Holy Grail"
   * Listen to the awesome response!!
+
+If you are experiencing to much usage and the skill is returning errors, you may enter your own API key
+
+* Signup [here](https://www.themoviedb.org/account/signup) for a FREE account
+
+* Get API key [here](https://www.themoviedb.org/settings/api)
+	* You will get a v.3 key and a v.4 key
+	* We will use the v.3 for this version **REMEMBER THIS, YOU WILL NEED IT**
+	* Enter your new v.3 API key at [Mycroft Skill Settings Page](https://account.mycroft.ai/skills)
 
 ## Category
 **Entertainment**

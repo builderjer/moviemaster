@@ -3,25 +3,27 @@
     "skillMetadata": {
         "sections": [
 	    {
-		"name": "API V3 key",
+		"name": "Configuration",
 		"fields": [
 		    {
-			"name": "apiv3",
-			"type": "text",
-			"label": "V3 key",
-			"value": ""
-		    }
-		]
-	    },
-	    {
-		"name": "Search Depth",
-		"fields": [
-		    {
-			"name": "searchDepth",
-			"type": "number",
-			"label": "Number of movies or TV shows to list when searching.",
-			"value": "5"
-		    }
+				"type": "label",
+				"label": "This skill uses a default API key.  If you experience overloading of this skill, you may enter your own here"
+					},
+			{
+				"name": "apiv3",
+				"type": "text",
+				"label": "API_V3 key",
+				"value": "Default"
+		    		},
+			{
+				"type": "label",
+				"label": "The Search Depth is the default number of items returned on a search."
+					},
+			{
+				"name": "searchDepth",
+				"type": "number",
+				"value": "5"
+		    		}
 		]
 	    }
         ]
