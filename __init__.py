@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 from mycroft import MycroftSkill, intent_file_handler
 from mycroft.util.format import pronounce_number, nice_date, nice_number
 from mycroft.util.log import LOG
@@ -7,6 +8,7 @@ import tmdbv3api
 
 __author__ = "builderjer@github.com"
 __version__ = "0.2.0"
+__api__= "6b064259b900f7d4fd32f3c74ac35207"
 
 LOGGER = LOG(__name__)
 
@@ -23,50 +25,42 @@ class MovieMaster(MycroftSkill):
 	def initialize(self):
 		""" This sets some variables that do not change during the execution of the script"""
 		
-		# An API key is required for this to work.  See the README.md for more info
-		
-		
 		# Try and get the settings from https://account.mycroft.ai/skills
-		#try:
-			## Get the API 
-			#self.api = self.settings.get("apiv3")
+		api = self.settings.get("apiv3")
+		if api == "Default" or api == "":
+			TMDB.api_key = __api__
+		else:
+			try:
+				TMDB.api_key = api
+				# Do a quick search to verify the api_key
+				p = MOVIE.popular()
+			except Exception:
+				self.speak_dialog("no.valid.api", {})
+				self.speak("Falling back to the default A P I")
+			
 		# Get search depth
 		self.searchDepth = self.settings.get("searchDepth")
-			#if self.api:
-				#try:
-					## Set the API Key
-					#TMDB.api_key = self.api
+		
 		# Set the language from the default in settings
 		TMDB.language = self.lang
-				#except tmdbv3api.exceptions.TMDbException:
-					#self.speak_dialog("no.valid.api", {})
-			#else:
-				#self.speak_dialog("no.api", {})
-				
-		## If the api_key is no good, it throws a KeyError
-		#except KeyError:
-			#self.speak_dialog("no.valid.api", {})
 			
 		self.settings.set_changed_callback(self.on_web_settings_change)
 		
 	def on_web_settings_change(self):
-		#try:
-			#self.api = self.settings.get("apiv3")
+		api = self.settings.get("apiv3")
+		if api == "Default" or api == "":
+			TMDB.api_key = __api__
+		else:
+			try:
+				TMDB.api_key = api
+				# Do a quick search to verify the api_key
+				p = MOVIE.popular()
+			except Exception:
+				self.speak_dialog("no.valid.api", {})
+				self.speak("Falling back to the default A P I")
+			
+		# Get search depth
 		self.searchDepth = self.settings.get("searchDepth")
-			#if self.api:
-				#try:
-					## Set the API Key
-					#TMDB.api_key = self.api
-					## Get the movie genres
-					##self.movieGenres = GENRE.movie_list()
-				#except tmdbv3api.exceptions.TMDbException:
-					#self.speak_dialog("no.valid.api", {})
-			#else:
-				#self.speak_dialog("no.api", {})
-				
-		## If the api_key is no good, it throws a KeyError
-		#except KeyError:
-			#self.speak_dialog("no.valid.api", {})
 			
 	@property
 	def api(self):
@@ -102,10 +96,6 @@ class MovieMaster(MycroftSkill):
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
 		
-		# If there is an API key, but it is invalid, it just calls an Exception
-		except Exception as e:
-			self.speak_dialog("no.valid.api", {})
-
 	@intent_file_handler("movie.information.intent")
 	def handle_movie_information(self, message):
 		""" Gets the short version and adds the TagLine for good measure.
@@ -119,10 +109,6 @@ class MovieMaster(MycroftSkill):
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		
-		# If there is an API key, but it is invalid, it just calls an Exception
-		except Exception:
-			self.speak_dialog("no.valid.api", {})
 	
 	@intent_file_handler("movie.year.intent")
 	def handle_movie_year(self, message):
@@ -137,10 +123,6 @@ class MovieMaster(MycroftSkill):
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
 		
-		# If there is an API key, but it is invalid, it just calls an Exception
-		except Exception:
-			self.speak_dialog("no.valid.api", {})
-	
 	@intent_file_handler("movie.cast.intent")
 	def handle_movie_cast(self, message):
 		""" Gets the cast of the requested movie.
@@ -167,10 +149,6 @@ class MovieMaster(MycroftSkill):
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		
-		# If there is an API key, but it is invalid, it just calls an Exception
-		except Exception:
-			self.speak_dialog("no.valid.api", {})
 
 	@intent_file_handler("movie.production.intent")
 	def handle_movie_production(self, message):
@@ -197,10 +175,6 @@ class MovieMaster(MycroftSkill):
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		
-		# If there is an API key, but it is invalid, it just calls an Exception
-		except Exception:
-			self.speak_dialog("no.valid.api", {})
 
 	@intent_file_handler("movie.genres.intent")
 	def handle_movie_genre(self, message):
@@ -225,10 +199,6 @@ class MovieMaster(MycroftSkill):
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		
-		# If there is an API key, but it is invalid, it just calls an Exception
-		except Exception:
-			self.speak_dialog("no.valid.api", {})
 
 	@intent_file_handler("movie.runtime.intent")
 	def handle_movie_length(self, message):
@@ -242,10 +212,6 @@ class MovieMaster(MycroftSkill):
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		
-		# If there is an API key, but it is invalid, it just calls an Exception
-		except Exception:
-			self.speak_dialog("no.valid.api", {})
 	
 	@intent_file_handler("movie.recommendations.intent")
 	def handle_movie_recommendations(self, message):
@@ -269,10 +235,6 @@ class MovieMaster(MycroftSkill):
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie.title})
-		
-		# If there is an API key, but it is invalid, it just calls an Exception
-		except Exception:
-			self.speak_dialog("no.valid.api", {})
 			
 	@intent_file_handler("movie.popular.intent")
 	def handle_popular_movies(self, message):
@@ -294,10 +256,6 @@ class MovieMaster(MycroftSkill):
 					popularDialog = popularDialog + ", " + movie.title
 			popularDialog = popularDialog + " and {}".format(lastMovie.title)
 			self.speak_dialog("movie.popular", {"popularlist": popularDialog})
-			
-		# If there is an API key, but it is invalid, it just calls an Exception
-		except Exception:
-			self.speak_dialog("no.valid.api", {})
 
 	@intent_file_handler("movie.top.intent")
 	def handle_top_movies(self, message):
@@ -318,10 +276,6 @@ class MovieMaster(MycroftSkill):
 					topDialog = topDialog + ", {}".format(movie.title)
 			topDialog = topDialog + " and {}".format(lastMovie.title)
 			self.speak_dialog("movie.top", {"toplist": topDialog})
-					
-		# If there is an API key, but it is invalid, it just calls an Exception
-		except Exception:
-			self.speak_dialog("no.valid.api", {})
 		
 def create_skill():
 	return MovieMaster()
