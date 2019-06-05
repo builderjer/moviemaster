@@ -256,6 +256,9 @@ class MovieMaster(MycroftSkill):
 					popularDialog = popularDialog + ", " + movie.title
 			popularDialog = popularDialog + " and {}".format(lastMovie.title)
 			self.speak_dialog("movie.popular", {"popularlist": popularDialog})
+			
+		except:
+			pass
 
 	@intent_file_handler("movie.top.intent")
 	def handle_top_movies(self, message):
@@ -276,6 +279,9 @@ class MovieMaster(MycroftSkill):
 					topDialog = topDialog + ", {}".format(movie.title)
 			topDialog = topDialog + " and {}".format(lastMovie.title)
 			self.speak_dialog("movie.top", {"toplist": topDialog})
+		
+		except:
+			pass
 		
 def create_skill():
 	return MovieMaster()
