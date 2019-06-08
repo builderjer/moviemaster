@@ -36,7 +36,7 @@ class MovieMaster(MycroftSkill):
 				p = MOVIE.popular()
 			except Exception:
 				self.speak_dialog("no.valid.api", {})
-				self.speak("Falling back to the default A P I")
+				self.speak_dialog("fallback.api", {})
 				TMDB.api_key = __api__
 			
 		# Get search depth
@@ -58,7 +58,8 @@ class MovieMaster(MycroftSkill):
 				p = MOVIE.popular()
 			except Exception:
 				self.speak_dialog("no.valid.api", {})
-				self.speak("Falling back to the default A P I")
+				self.speak_dialog("fallback.api", {})
+				TMDB.api_key = __api__
 			
 		# Get search depth
 		self.searchDepth = self.settings.get("searchDepth")
