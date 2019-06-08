@@ -37,6 +37,7 @@ class MovieMaster(MycroftSkill):
 			except Exception:
 				self.speak_dialog("no.valid.api", {})
 				self.speak("Falling back to the default A P I")
+				TMDB.api_key = __api__
 			
 		# Get search depth
 		self.searchDepth = self.settings.get("searchDepth")
