@@ -1,11 +1,9 @@
-# <img src='PrimaryLogo_Green.png' width='50' style='vertical-align:bottom'/> MOVIE MASTER
+# <img src='PrimaryLogo_Green.png' width='50' style='vertical-align:bottom'/> Movie Master
 Find information about movies, actors and production details.
-
-# **Version 0.2.0 - Please test carefully**
 
 ## About
 
-Easily find information, such as a description, or cast from a movie with your voice.
+Easily find information about a movie with your voice.
 
 ## Examples
  - "What is the movie _______ about?"
@@ -23,6 +21,11 @@ Easily find information, such as a description, or cast from a movie with your v
 
 ## Installation
 Installation should be pretty much effortless.
+
+### Install with your voice
+"Hey Mycroft, install Movie Master"
+
+Movie Master should install automatically
 
 ### Use mycroft-msm to install automatically
 Enter the following command into your terminal
