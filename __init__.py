@@ -26,18 +26,21 @@ class MovieMaster(MycroftSkill):
 		""" This sets some variables that do not change during the execution of the script"""
 		
 		# Try and get the settings from https://account.mycroft.ai/skills
-		api = self.settings.get("apiv3")
-		if api == "Default" or api == "":
-			TMDB.api_key = __api__
-		else:
-			try:
-				TMDB.api_key = api
-				# Do a quick search to verify the api_key
-				p = MOVIE.popular()
-			except Exception:
-				self.speak_dialog("no.valid.api", {})
-				self.speak_dialog("fallback.api", {})
-				TMDB.api_key = __api__
+		self.api = self.settings.get("apiv3")
+		if self.api == "Default" or self.api =="" or self.api ==None:
+			self.api = __api__
+		#else:
+			#TMDB.api_key = self.api
+		try:
+			# Do a quick search to verify the api_key
+			TMDB.api_key = self.api
+			p = MOVIE.popular()
+		except Exception:
+			self.speak_dialog("no.valid.api", {})
+			self.speak_dialog("fallback.api", {})
+			self.api = __api__
+			
+		TMDB.api_key = self.api
 			
 		# Get search depth
 		self.searchDepth = self.settings.get("searchDepth")
