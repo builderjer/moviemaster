@@ -1,4 +1,4 @@
 {
-  "utterance": "recommend movies like momento",
+  "utterance": "recommend movies like stripes",
   "expected_dialog": "movie.recommendations"
 }
