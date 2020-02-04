@@ -1,0 +1,2 @@
+(elenca|trova) (film|) (di|d'|) {genre}
+(elenca|cerca|trova) film (di|d'|) {genre}

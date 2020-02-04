@@ -1,0 +1,2 @@
+(listar|buscar|procurar|exibir) (filmes|curtas) que são (de) {genre}
+(listar|buscar|procurar) (filmes|curtas|filmes de|curtas de) {genre}

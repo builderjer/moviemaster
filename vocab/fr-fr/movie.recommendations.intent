@@ -1,0 +1,3 @@
+recommander des (films|video) (similaire au film|comme le film) {movie}
+quels sont les films que vous recommanderiez (similaire au film|comme le film|comme) {movie}
+(liste|récupère) (les|des) (|bons) films (similaires au film|comme le film|comme) {movie}

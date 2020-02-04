@@ -1,0 +1,3 @@
+(La|El) (película|filme) {movie} dura {runtime} minutos.
+(La|El) (película|filme) {movie} tiene una duración de {runtime} minutos.
+Viendo la película {movie}; Puedes esperar cerca de {runtime} minutos antes de que puedas ir al baño.
