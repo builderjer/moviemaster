@@ -1,0 +1,3 @@
+vilken (genre|genren) tillhör (videon|filmen|film) {movie}
+vilken är (genre|genren) för (videon|filmen|film) {movie}
+vilken (genre|genren) (är|tillhör) denna (videon|filmen|film) {movie}

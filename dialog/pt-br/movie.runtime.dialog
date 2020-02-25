@@ -1,0 +1,3 @@
+(O|A) (filme|fita) {movie} dura {runtime} minutos.
+O filme {movie} tem duração de {runtime} minutos.
+Assistindo {movie}; Você pode esperar cerca de {runtime} minutos antes de poder ter uma pausa para ir ao banheiro.

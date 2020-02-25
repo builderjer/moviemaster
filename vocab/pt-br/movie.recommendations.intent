@@ -1,0 +1,3 @@
+recomende filmes (similares|parecidos|parecidos com|como|iguais) (ao|) {movie}
+qual filme você (recomenda|recomendaria) (parecido|parecido com|igual|similar|como) (ao|) {movie}
+(listar|liste|recomende|recomendar) (filmes|fitas) (similares|parecidos|parecidas|parecidos|parecidas|com|como|iguais) (ao|à) {movie}

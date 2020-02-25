@@ -1,0 +1,3 @@
+Der (movie | film | flick) {movie} läuft {runtime} Minuten.
+Der (movie|film|flick) {movie} ist {runtime} Minuten lang.
+Schaue {movie}; du musst mit ungefähr {runtime} Minuten rechnen, bevor du eine Toilettenpause einlegen kannst.

@@ -1,0 +1,3 @@
+(Videon|Filmen|Film) {movie}, varar i {runtime} minuter.
+(Videon|Filmen|Film) {movie} är {runtime} minuter lång.
+Titta på {movie}; Du kan förvänta dig cirka {runtime} minuter innan du kan ta en badrumsavbrott.

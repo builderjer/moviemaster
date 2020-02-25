@@ -1,0 +1,3 @@
+Recomienda (películas|filmes) (similares a|parecidas a) {movie}
+Qué (películas|filmes) recomendarias (similares a|parecidas a) {movie}
+(Lista|obtiene) (|buenas|buenos) (películas|filmes) similares a {movie}
