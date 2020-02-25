@@ -21,10 +21,10 @@ class MovieMaster(MycroftSkill):
 		super(MovieMaster, self).__init__(name="MovieMaster")
 		self._api = None
 		self._searchDepth = None
-	
+
 	def initialize(self):
 		""" This sets some variables that do not change during the execution of the script"""
-		
+
 		# Try and get the settings from https://account.mycroft.ai/skills
 		self.api = self.settings.get("apiv3")
 		if self.api == "Default" or self.api =="" or self.api ==None:
@@ -39,17 +39,17 @@ class MovieMaster(MycroftSkill):
 			self.speak_dialog("no.valid.api", {})
 			self.speak_dialog("fallback.api", {})
 			self.api = __api__
-			
+
 		TMDB.api_key = self.api
-			
+
 		# Get search depth
 		self.searchDepth = self.settings.get("searchDepth")
-		
+
 		# Set the language from the default in settings
 		TMDB.language = self.lang
-			
-		self.settings.set_changed_callback(self.on_web_settings_change)
-		
+
+		self.settings.settings_change_callback = self.on_web_settings_change
+
 	def on_web_settings_change(self):
 		api = self.settings.get("apiv3")
 		if api == "Default" or api == "":
@@ -63,10 +63,10 @@ class MovieMaster(MycroftSkill):
 				self.speak_dialog("no.valid.api", {})
 				self.speak_dialog("fallback.api", {})
 				TMDB.api_key = __api__
-			
+
 		# Get search depth
 		self.searchDepth = self.settings.get("searchDepth")
-			
+
 	@property
 	def api(self):
 		return self._api
@@ -74,15 +74,15 @@ class MovieMaster(MycroftSkill):
 	@api.setter
 	def api(self, apiNum):
 		self._api = apiNum
-	
+
 	@property
 	def searchDepth(self):
 		return self._searchDepth
-	
+
 	@searchDepth.setter
 	def searchDepth(self, depth):
 		self._searchDepth = depth
-		
+
 	@intent_file_handler("movie.description.intent")
 	def handle_movie_description(self, message):
 		""" Gets the long version of the requested movie.
@@ -96,11 +96,11 @@ class MovieMaster(MycroftSkill):
 					self.speak(sentence)
 			else:
 				self.speak_dialog("no.info", {"movie": movie})
-				
+
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		
+
 	@intent_file_handler("movie.information.intent")
 	def handle_movie_information(self, message):
 		""" Gets the short version and adds the TagLine for good measure.
@@ -110,11 +110,11 @@ class MovieMaster(MycroftSkill):
 			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
 			self.speak_dialog("movie.info.response", {"movie": movieDetails.title, "year": nice_date(datetime.strptime(movieDetails.release_date.replace("-", " "), "%Y %m %d")), "budget": nice_number(movieDetails.budget)})
 			self.speak(movieDetails.tagline)
-				
+
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-	
+
 	@intent_file_handler("movie.year.intent")
 	def handle_movie_year(self, message):
 		""" Gets the year the movie was released.
@@ -123,22 +123,22 @@ class MovieMaster(MycroftSkill):
 		try:
 			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
 			self.speak_dialog("movie.year", {"movie": movieDetails.title, "year": nice_date(datetime.strptime(movieDetails.release_date.replace("-", " "), "%Y %m %d"))})
-				
+
 		## If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-		
+
 	@intent_file_handler("movie.cast.intent")
 	def handle_movie_cast(self, message):
 		""" Gets the cast of the requested movie.
-		
+
 		The search_depth setting is avaliable at home.mycroft.ai
 		"""
 		movie = message.data.get("movie")
 		try:
 			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
 			cast = movieDetails.casts["cast"][:self.searchDepth]
-			
+
 			# Create a list to store the cast to be included in the dialog
 			actorList = ""
 			# Get the last actor in the list so that the dialog can say it properly
@@ -150,7 +150,7 @@ class MovieMaster(MycroftSkill):
 				# Add the formated sentence to the actor list
 				actorList = actorList + actor
 			self.speak_dialog("movie.cast", {"movie": movie, "actorlist": actorList, "lastactor": lastActor})
-				
+
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
@@ -158,14 +158,14 @@ class MovieMaster(MycroftSkill):
 	@intent_file_handler("movie.production.intent")
 	def handle_movie_production(self, message):
 		""" Gets the production companies that made the movie.
-		
+
 		The search_depth setting is avaliable at home.mycroft.ai
 		"""
 		movie = message.data.get("movie")
 		try:
 			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
 			companyList = movieDetails.production_companies[:self.searchDepth]
-			
+
 			# If there is only one production company, say the dialog differently
 			if len(companyList) == 1:
 				self.speak_dialog("movie.production.single", {"movie": movie, "company": companyList[0]["name"]})
@@ -176,7 +176,7 @@ class MovieMaster(MycroftSkill):
 				for company in companyList:
 					companies = companies + company["name"] + ", "
 				self.speak_dialog("movie.production.multiple", {"companies": companies, "movie": movie, "lastcompany": lastCompany})
-				
+
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
@@ -184,7 +184,7 @@ class MovieMaster(MycroftSkill):
 	@intent_file_handler("movie.genres.intent")
 	def handle_movie_genre(self, message):
 		""" Gets the genres the movie belongs to.
-		
+
 		The search_depth setting is avaliable at home.mycroft.ai
 		"""
 		movie = message.data.get("movie")
@@ -200,7 +200,7 @@ class MovieMaster(MycroftSkill):
 				for genre in genreList:
 					genreDialog = genreDialog + genre["name"] + ", "
 				self.speak_dialog("movie.genre.multiple", {"genrelist": genreDialog, "genrelistlast": lastGenre})
-				
+
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
@@ -213,11 +213,11 @@ class MovieMaster(MycroftSkill):
 		try:
 			movieDetails = MOVIE.details(MOVIE.search(movie)[:1][0].id)
 			self.speak_dialog("movie.runtime", {"movie": movie, "runtime": movieDetails.runtime})
-				
+
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie})
-	
+
 	@intent_file_handler("movie.recommendations.intent")
 	def handle_movie_recommendations(self, message):
 		""" Gets the top movies that are similar to the suggested movie.
@@ -236,17 +236,17 @@ class MovieMaster(MycroftSkill):
 					movieDialog = movieDialog + ", " + film.title
 			movieDialog = movieDialog + " and {}".format(lastMovie.title)
 			self.speak_dialog("movie.recommendations", {"movielist": movieDialog, "movie": movie})
-			
+
 		# If the title can not be found, it creates an IndexError
 		except IndexError:
 			self.speak_dialog("no.info", {"movie": movie.title})
-			
+
 	@intent_file_handler("movie.popular.intent")
 	def handle_popular_movies(self, message):
 		""" Gets the daily popular movies.
-		
+
 		The list changes daily, and are not just recent movies.
-		
+
 		The search_depth setting is avaliable at home.mycroft.ai
 		"""
 		try:
@@ -261,7 +261,7 @@ class MovieMaster(MycroftSkill):
 					popularDialog = popularDialog + ", " + movie.title
 			popularDialog = popularDialog + " and {}".format(lastMovie.title)
 			self.speak_dialog("movie.popular", {"popularlist": popularDialog})
-			
+
 		except:
 			pass
 
@@ -269,7 +269,7 @@ class MovieMaster(MycroftSkill):
 	def handle_top_movies(self, message):
 		""" Gets the top rated movies of the day.
 		The list changes daily, and are not just recent movies.
-		
+
 		The search_depth setting is avaliable at home.mycroft.ai
 		"""
 		try:
@@ -284,9 +284,9 @@ class MovieMaster(MycroftSkill):
 					topDialog = topDialog + ", {}".format(movie.title)
 			topDialog = topDialog + " and {}".format(lastMovie.title)
 			self.speak_dialog("movie.top", {"toplist": topDialog})
-		
+
 		except:
 			pass
-		
+
 def create_skill():
 	return MovieMaster()
