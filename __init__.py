@@ -48,7 +48,7 @@ class MovieMaster(MycroftSkill):
 		# Set the language from the default in settings
 		TMDB.language = self.lang
 
-		self.settings.settings_change_callback = self.on_web_settings_change
+		self.settings_change_callback = self.on_web_settings_change
 
 	def on_web_settings_change(self):
 		api = self.settings.get("apiv3")
