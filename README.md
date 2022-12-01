@@ -34,10 +34,10 @@ Enter the following command into your terminal
 mycroft-msm install https://github.com/builderjer/moviemaster.git
 ```
 
-msm should install the dependcencies automatically
+msm should install the dependencies automatically
 
 ### Manual Installation
-Install the dependcencies
+Install the dependencies
 
 ```
 pip install tmdbv3api
@@ -57,7 +57,7 @@ git clone https://github.com/builderjer/moviemaster.git
   * "Hey Mycroft, tell me about the movie Monty Python and the Holy Grail"
   * Listen to the awesome response!!
 
-If you are experiencing to much usage and the skill is returning errors, you may enter your own API key
+If you are experiencing to much usage and the skill is returning errors you may enter your own API key
 
 * Signup [here](https://www.themoviedb.org/account/signup) for a FREE account
 
